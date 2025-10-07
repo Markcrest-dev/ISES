@@ -1,25 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const LandingPage: React.FC = () => {
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+
   const testimonials = [
     {
       name: "Sarah Johnson",
       role: "Computer Science Student",
       image: "https://randomuser.me/api/portraits/women/1.jpg",
-      text: "ISES has transformed my learning experience. The instant AI feedback helps me understand my mistakes and improve quickly."
+      text: "ISES has transformed my learning experience. The instant AI feedback helps me understand my mistakes and improve quickly.",
+      rating: 5
     },
     {
       name: "Dr. Michael Chen",
       role: "Professor of Engineering",
       image: "https://randomuser.me/api/portraits/men/1.jpg",
-      text: "As an instructor, ISES has significantly reduced my grading workload while providing more consistent and detailed feedback to my students."
+      text: "As an instructor, ISES has significantly reduced my grading workload while providing more consistent and detailed feedback to my students.",
+      rating: 5
     },
     {
       name: "Emily Rodriguez",
       role: "Mathematics Student",
       image: "https://randomuser.me/api/portraits/women/2.jpg",
-      text: "The personalized learning recommendations have helped me focus on areas where I need the most improvement."
+      text: "The personalized learning recommendations have helped me focus on areas where I need the most improvement.",
+      rating: 5
     }
   ];
 
@@ -43,38 +48,40 @@ const LandingPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       {/* Navigation */}
-      <nav className="bg-white shadow-sm fixed w-full z-50">
+      <nav className="bg-white/80 backdrop-blur-md shadow-sm fixed w-full z-50 border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
               <div className="flex-shrink-0 flex items-center">
-                <span className="text-2xl font-bold text-indigo-600">ISES</span>
+                <div className="flex items-center space-x-2">
+                  <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
+                    <span className="text-white font-bold text-xl">I</span>
+                  </div>
+                  <span className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">ISES</span>
+                </div>
               </div>
-              <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-                <a href="#about" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+              <div className="hidden sm:ml-8 sm:flex sm:space-x-8">
+                <a href="#about" className="text-gray-600 hover:text-indigo-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors duration-200">
                   About
                 </a>
-                <a href="#features" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                <a href="#features" className="text-gray-600 hover:text-indigo-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors duration-200">
                   Features
                 </a>
-                <a href="#testimonials" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                <a href="#testimonials" className="text-gray-600 hover:text-indigo-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors duration-200">
                   Testimonials
                 </a>
-                <a href="#faq" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                <a href="#faq" className="text-gray-600 hover:text-indigo-600 inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors duration-200">
                   FAQ
-                </a>
-                <a href="#how-it-works" className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                  How It Works
                 </a>
               </div>
             </div>
-            <div className="flex items-center">
-              <a href="/login" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
+            <div className="flex items-center space-x-4">
+              <a href="/login" className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200">
                 Sign In
               </a>
-              <a href="/signup" className="ml-4 bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700">
+              <a href="/signup" className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200">
                 Get Started
               </a>
             </div>
@@ -83,241 +90,218 @@ const LandingPage: React.FC = () => {
       </nav>
 
       {/* Hero Section */}
-      <div className="bg-white">
-        <div className="max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8">
+      <div className="relative overflow-hidden bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 pt-20">
+        <div className="absolute inset-0 bg-grid-slate-900/[0.04] [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))]"></div>
+        <div className="max-w-7xl mx-auto py-20 px-4 sm:py-32 sm:px-6 lg:px-8 relative">
           <div className="text-center">
-            <h1 className="text-4xl font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl">
-              Transform Student Success with Intelligent Assessment
+            <div className="inline-block">
+              <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800 mb-8 animate-pulse">
+                🚀 Transform Your Learning Experience
+              </span>
+            </div>
+            <h1 className="text-5xl font-extrabold text-gray-900 sm:text-6xl sm:tracking-tight lg:text-7xl">
+              <span className="block">Intelligent Student</span>
+              <span className="block bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Evaluation System</span>
             </h1>
-            <p className="mt-6 max-w-xl mx-auto text-xl text-gray-500">
+            <p className="mt-8 max-w-2xl mx-auto text-xl text-gray-600 leading-relaxed">
               AI-powered evaluation platform that provides instant feedback, personalized recommendations, and predictive analytics for better learning outcomes.
             </p>
-            <div className="mt-10 flex justify-center">
-              <a href="/signup" className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-md text-lg font-medium hover:bg-indigo-700">
-                Get Started Free
+            <div className="mt-12 flex justify-center gap-4">
+              <a href="/signup" className="group relative inline-flex items-center px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-lg font-semibold rounded-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-200">
+                <span>Get Started Free</span>
+                <svg className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
               </a>
-              <a href="#how-it-works" className="ml-4 inline-block bg-white text-indigo-600 border border-indigo-600 px-6 py-3 rounded-md text-lg font-medium hover:bg-indigo-50">
+              <a href="#how-it-works" className="inline-flex items-center px-8 py-4 bg-white text-indigo-600 border-2 border-indigo-600 text-lg font-semibold rounded-xl hover:bg-indigo-50 transform hover:-translate-y-1 transition-all duration-200">
                 Learn More
               </a>
             </div>
-            <div className="mt-8">
-              <p className="text-gray-500">
-                1000+ Active Students | 95% Satisfaction | 24/7 Availability
-              </p>
+            <div className="mt-12 flex items-center justify-center space-x-8 text-sm">
+              <div className="flex items-center">
+                <svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                <span className="text-gray-700 font-medium">1000+ Active Students</span>
+              </div>
+              <div className="flex items-center">
+                <svg className="w-5 h-5 text-yellow-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+                <span className="text-gray-700 font-medium">95% Satisfaction</span>
+              </div>
+              <div className="flex items-center">
+                <svg className="w-5 h-5 text-blue-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                </svg>
+                <span className="text-gray-700 font-medium">24/7 Availability</span>
+              </div>
             </div>
           </div>
         </div>
+        <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white to-transparent"></div>
       </div>
 
       {/* Features Section */}
-      <div id="features" className="py-12 bg-gray-50">
+      <div id="features" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h2 className="text-3xl font-extrabold text-gray-900">Powerful Features</h2>
-            <p className="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">
+            <span className="text-indigo-600 font-semibold text-sm uppercase tracking-wide">Features</span>
+            <h2 className="mt-2 text-4xl font-extrabold text-gray-900">Powerful Features for Modern Learning</h2>
+            <p className="mt-4 max-w-2xl text-xl text-gray-600 mx-auto">
               Everything you need to enhance the learning experience
             </p>
           </div>
 
-          <div className="mt-10">
+          <div className="mt-16">
             <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              <div className="bg-white p-6 rounded-lg shadow">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0 bg-indigo-500 rounded-md p-3">
+              {[
+                {
+                  icon: (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  ),
+                  title: "Performance Analytics",
+                  description: "Track progress with detailed analytics and insights into learning patterns.",
+                  gradient: "from-blue-500 to-cyan-500"
+                },
+                {
+                  icon: (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                  ),
+                  title: "AI-Powered Feedback",
+                  description: "Receive instant, personalized feedback on assignments and assessments.",
+                  gradient: "from-purple-500 to-pink-500"
+                },
+                {
+                  icon: (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  ),
+                  title: "Learning Style Analysis",
+                  description: "Understand individual learning preferences with VARK model analysis.",
+                  gradient: "from-green-500 to-emerald-500"
+                },
+                {
+                  icon: (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  ),
+                  title: "Instant Grading",
+                  description: "Get immediate results with our advanced AI grading system.",
+                  gradient: "from-orange-500 to-red-500"
+                },
+                {
+                  icon: (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                  ),
+                  title: "Personalized Learning",
+                  description: "Customized learning paths based on individual student performance.",
+                  gradient: "from-indigo-500 to-blue-500"
+                },
+                {
+                  icon: (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  ),
+                  title: "Data Security",
+                  description: "Enterprise-grade security ensuring your data is safe and protected.",
+                  gradient: "from-yellow-500 to-orange-500"
+                }
+              ].map((feature, index) => (
+                <div
+                  key={index}
+                  className="group relative bg-white p-8 rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100"
+                >
+                  <div className={`inline-flex p-4 rounded-xl bg-gradient-to-br ${feature.gradient} shadow-lg transform group-hover:scale-110 transition-transform duration-300`}>
                     <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                      {feature.icon}
                     </svg>
                   </div>
-                  <div className="ml-4">
-                    <h3 className="text-lg font-medium text-gray-900">Performance Analytics</h3>
-                  </div>
-                </div>
-                <p className="mt-4 text-base text-gray-500">
-                  Track progress with detailed analytics and insights into learning patterns.
-                </p>
-              </div>
-
-              <div className="bg-white p-6 rounded-lg shadow">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0 bg-indigo-500 rounded-md p-3">
-                    <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                  <h3 className="mt-6 text-xl font-semibold text-gray-900">{feature.title}</h3>
+                  <p className="mt-3 text-base text-gray-600 leading-relaxed">
+                    {feature.description}
+                  </p>
+                  <div className="mt-4 flex items-center text-indigo-600 font-medium">
+                    <span className="text-sm">Learn more</span>
+                    <svg className="ml-2 w-4 h-4 group-hover:translate-x-2 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                     </svg>
                   </div>
-                  <div className="ml-4">
-                    <h3 className="text-lg font-medium text-gray-900">AI-Powered Feedback</h3>
-                  </div>
                 </div>
-                <p className="mt-4 text-base text-gray-500">
-                  Receive instant, personalized feedback on assignments and assessments.
-                </p>
-              </div>
-
-              <div className="bg-white p-6 rounded-lg shadow">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0 bg-indigo-500 rounded-md p-3">
-                    <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                  </div>
-                  <div className="ml-4">
-                    <h3 className="text-lg font-medium text-gray-900">Learning Style Analysis</h3>
-                  </div>
-                </div>
-                <p className="mt-4 text-base text-gray-500">
-                  Understand individual learning preferences with VARK model analysis.
-                </p>
-              </div>
+              ))}
             </div>
           </div>
         </div>
       </div>
 
       {/* How It Works Section */}
-      <div id="how-it-works" className="py-12 bg-white">
+      <div id="how-it-works" className="py-20 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h2 className="text-3xl font-extrabold text-gray-900">How It Works</h2>
-            <p className="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">
+            <span className="text-indigo-600 font-semibold text-sm uppercase tracking-wide">Process</span>
+            <h2 className="mt-2 text-4xl font-extrabold text-gray-900">How It Works</h2>
+            <p className="mt-4 max-w-2xl text-xl text-gray-600 mx-auto">
               Simple steps to transform your academic journey
             </p>
           </div>
 
-          <div className="mt-10">
-            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-              <div className="text-center">
-                <div className="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white mx-auto">
-                  1
-                </div>
-                <h3 className="mt-5 text-lg font-medium text-gray-900">Create Account</h3>
-                <p className="mt-2 text-base text-gray-500">
-                  Sign up as a student, instructor, or administrator.
-                </p>
-              </div>
-
-              <div className="text-center">
-                <div className="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white mx-auto">
-                  2
-                </div>
-                <h3 className="mt-5 text-lg font-medium text-gray-900">Submit Assignments</h3>
-                <p className="mt-2 text-base text-gray-500">
-                  Upload your work directly through the platform.
-                </p>
-              </div>
-
-              <div className="text-center">
-                <div className="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white mx-auto">
-                  3
-                </div>
-                <h3 className="mt-5 text-lg font-medium text-gray-900">Receive AI Feedback</h3>
-                <p className="mt-2 text-base text-gray-500">
-                  Get instant, personalized feedback and scoring.
-                </p>
-              </div>
-
-              <div className="text-center">
-                <div className="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white mx-auto">
-                  4
-                </div>
-                <h3 className="mt-5 text-lg font-medium text-gray-900">Track Progress</h3>
-                <p className="mt-2 text-base text-gray-500">
-                  Monitor your improvement with detailed analytics.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* About Section */}
-      <div className="bg-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-              About ISES
-            </h2>
-            <p className="mt-4 max-w-2xl mx-auto text-xl text-gray-500">
-              ISES is revolutionizing education through intelligent assessment technology.
-              Our platform combines AI-powered evaluation with human expertise to provide
-              comprehensive feedback and personalized learning paths.
-            </p>
-          </div>
-          
           <div className="mt-16">
-            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              <div className="pt-6">
-                <div className="flow-root bg-gray-50 rounded-lg px-6 pb-8">
-                  <div className="-mt-6">
-                    <div className="inline-flex items-center justify-center p-3 bg-indigo-500 rounded-md shadow-lg">
-                      <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                      </svg>
+            <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-4">
+              {[
+                { step: "1", title: "Create Account", description: "Sign up as a student, instructor, or administrator.", color: "blue" },
+                { step: "2", title: "Submit Assignments", description: "Upload your work directly through the platform.", color: "purple" },
+                { step: "3", title: "Receive AI Feedback", description: "Get instant, personalized feedback and scoring.", color: "pink" },
+                { step: "4", title: "Track Progress", description: "Monitor your improvement with detailed analytics.", color: "indigo" }
+              ].map((item, index) => (
+                <div key={index} className="relative text-center">
+                  <div className="flex flex-col items-center">
+                    <div className={`flex items-center justify-center h-16 w-16 rounded-2xl bg-gradient-to-br from-${item.color}-500 to-${item.color}-600 text-white text-2xl font-bold shadow-xl transform hover:scale-110 transition-transform duration-300`}>
+                      {item.step}
                     </div>
-                    <h3 className="mt-8 text-lg font-medium text-gray-900 tracking-tight">Smart Assessment</h3>
-                    <p className="mt-5 text-base text-gray-500">
-                      Advanced AI algorithms provide instant, detailed feedback on student work.
-                    </p>
+                    {index < 3 && (
+                      <div className="hidden lg:block absolute top-8 left-full w-full h-0.5 bg-gradient-to-r from-indigo-200 to-purple-200"></div>
+                    )}
                   </div>
+                  <h3 className="mt-6 text-xl font-semibold text-gray-900">{item.title}</h3>
+                  <p className="mt-3 text-base text-gray-600 leading-relaxed">
+                    {item.description}
+                  </p>
                 </div>
-              </div>
-
-              <div className="pt-6">
-                <div className="flow-root bg-gray-50 rounded-lg px-6 pb-8">
-                  <div className="-mt-6">
-                    <div className="inline-flex items-center justify-center p-3 bg-indigo-500 rounded-md shadow-lg">
-                      <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-                      </svg>
-                    </div>
-                    <h3 className="mt-8 text-lg font-medium text-gray-900 tracking-tight">Personalized Learning</h3>
-                    <p className="mt-5 text-base text-gray-500">
-                      Customized learning paths based on individual student performance.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-6">
-                <div className="flow-root bg-gray-50 rounded-lg px-6 pb-8">
-                  <div className="-mt-6">
-                    <div className="inline-flex items-center justify-center p-3 bg-indigo-500 rounded-md shadow-lg">
-                      <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                      </svg>
-                    </div>
-                    <h3 className="mt-8 text-lg font-medium text-gray-900 tracking-tight">Data Security</h3>
-                    <p className="mt-5 text-base text-gray-500">
-                      Enterprise-grade security ensuring your data is safe and protected.
-                    </p>
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
       </div>
 
       {/* Testimonials Section */}
-      <div className="bg-gray-50 py-16">
+      <div id="testimonials" className="bg-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-12">
-            What Our Users Say
-          </h2>
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+          <div className="text-center">
+            <span className="text-indigo-600 font-semibold text-sm uppercase tracking-wide">Testimonials</span>
+            <h2 className="mt-2 text-4xl font-extrabold text-gray-900">What Our Users Say</h2>
+            <p className="mt-4 max-w-2xl text-xl text-gray-600 mx-auto">
+              Join thousands of satisfied students and educators
+            </p>
+          </div>
+          <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-3">
             {testimonials.map((testimonial, index) => (
-              <div key={index} className="bg-white rounded-lg shadow-lg p-6">
-                <div className="flex items-center mb-4">
+              <div key={index} className="group bg-gradient-to-br from-white to-indigo-50 rounded-2xl shadow-md hover:shadow-2xl p-8 transition-all duration-300 transform hover:-translate-y-2 border border-indigo-100">
+                <div className="flex items-center mb-6">
                   <img
-                    className="h-12 w-12 rounded-full"
+                    className="h-14 w-14 rounded-full ring-4 ring-indigo-100"
                     src={testimonial.image}
                     alt={testimonial.name}
                   />
                   <div className="ml-4">
-                    <h3 className="text-lg font-medium text-gray-900">{testimonial.name}</h3>
-                    <p className="text-sm text-gray-500">{testimonial.role}</p>
+                    <h3 className="text-lg font-semibold text-gray-900">{testimonial.name}</h3>
+                    <p className="text-sm text-gray-600">{testimonial.role}</p>
                   </div>
                 </div>
-                <p className="text-gray-600">{testimonial.text}</p>
+                <div className="flex mb-4">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <svg key={i} className="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20">
+                      <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                    </svg>
+                  ))}
+                </div>
+                <p className="text-gray-700 leading-relaxed italic">"{testimonial.text}"</p>
               </div>
             ))}
           </div>
@@ -325,74 +309,103 @@ const LandingPage: React.FC = () => {
       </div>
 
       {/* FAQ Section */}
-      <div className="bg-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-12">
-            Frequently Asked Questions
-          </h2>
-          <div className="max-w-3xl mx-auto">
+      <div id="faq" className="bg-gradient-to-br from-slate-50 to-indigo-50 py-20">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <span className="text-indigo-600 font-semibold text-sm uppercase tracking-wide">FAQ</span>
+            <h2 className="mt-2 text-4xl font-extrabold text-gray-900">Frequently Asked Questions</h2>
+          </div>
+          <div className="mt-16 space-y-4">
             {faqs.map((faq, index) => (
-              <div key={index} className="mb-8">
-                <h3 className="text-lg font-medium text-gray-900 mb-2">{faq.question}</h3>
-                <p className="text-gray-600">{faq.answer}</p>
+              <div key={index} className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
+                <button
+                  className="w-full text-left px-8 py-6 focus:outline-none"
+                  onClick={() => setActiveIndex(activeIndex === index ? null : index)}
+                >
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-gray-900">{faq.question}</h3>
+                    <svg
+                      className={`w-6 h-6 text-indigo-600 transform transition-transform duration-200 ${activeIndex === index ? 'rotate-180' : ''}`}
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div
+                    className={`mt-4 text-gray-600 leading-relaxed transition-all duration-300 ${activeIndex === index ? 'block' : 'hidden'}`}
+                  >
+                    {faq.answer}
+                  </div>
+                </button>
               </div>
             ))}
           </div>
         </div>
       </div>
 
+      {/* CTA Section */}
+      <div className="bg-gradient-to-r from-indigo-600 to-purple-600 py-20">
+        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+          <h2 className="text-4xl font-extrabold text-white">
+            Ready to Transform Your Learning?
+          </h2>
+          <p className="mt-4 text-xl text-indigo-100">
+            Join thousands of students and educators already using ISES
+          </p>
+          <div className="mt-8">
+            <a href="/signup" className="inline-flex items-center px-8 py-4 bg-white text-indigo-600 text-lg font-semibold rounded-xl hover:bg-indigo-50 transform hover:-translate-y-1 transition-all duration-200 shadow-xl">
+              <span>Get Started Now</span>
+              <svg className="ml-2 w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+
       {/* Footer */}
-      <footer className="bg-gray-800">
+      <footer className="bg-gray-900">
         <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="col-span-1">
-              <span className="text-2xl font-bold text-white">ISES</span>
-              <p className="mt-2 text-gray-400 text-sm">
+              <div className="flex items-center space-x-2 mb-4">
+                <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-xl">I</span>
+                </div>
+                <span className="text-2xl font-bold text-white">ISES</span>
+              </div>
+              <p className="text-gray-400 text-sm leading-relaxed">
                 Transforming education through intelligent assessment technology.
               </p>
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Resources</h3>
-              <ul className="mt-4 space-y-4">
-                <li>
-                  <a href="#about" className="text-base text-gray-300 hover:text-white">About Us</a>
-                </li>
-                <li>
-                  <a href="#features" className="text-base text-gray-300 hover:text-white">Features</a>
-                </li>
-                <li>
-                  <a href="#testimonials" className="text-base text-gray-300 hover:text-white">Testimonials</a>
-                </li>
-                <li>
-                  <a href="#faq" className="text-base text-gray-300 hover:text-white">FAQ</a>
-                </li>
+              <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Resources</h3>
+              <ul className="space-y-3">
+                <li><a href="#about" className="text-gray-300 hover:text-white transition-colors duration-200">About Us</a></li>
+                <li><a href="#features" className="text-gray-300 hover:text-white transition-colors duration-200">Features</a></li>
+                <li><a href="#testimonials" className="text-gray-300 hover:text-white transition-colors duration-200">Testimonials</a></li>
+                <li><a href="#faq" className="text-gray-300 hover:text-white transition-colors duration-200">FAQ</a></li>
               </ul>
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Legal</h3>
-              <ul className="mt-4 space-y-4">
-                <li>
-                  <Link to="/privacy" className="text-base text-gray-300 hover:text-white">Privacy Policy</Link>
-                </li>
-                <li>
-                  <Link to="/terms" className="text-base text-gray-300 hover:text-white">Terms of Service</Link>
-                </li>
+              <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Legal</h3>
+              <ul className="space-y-3">
+                <li><Link to="/privacy" className="text-gray-300 hover:text-white transition-colors duration-200">Privacy Policy</Link></li>
+                <li><Link to="/terms" className="text-gray-300 hover:text-white transition-colors duration-200">Terms of Service</Link></li>
               </ul>
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Connect</h3>
-              <ul className="mt-4 space-y-4">
-                <li>
-                  <Link to="/contact" className="text-base text-gray-300 hover:text-white">Contact Us</Link>
-                </li>
-                <li>
-                  <a href="mailto:support@ises.edu" className="text-base text-gray-300 hover:text-white">Email Support</a>
-                </li>
+              <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Connect</h3>
+              <ul className="space-y-3">
+                <li><Link to="/contact" className="text-gray-300 hover:text-white transition-colors duration-200">Contact Us</Link></li>
+                <li><a href="mailto:support@ises.edu" className="text-gray-300 hover:text-white transition-colors duration-200">Email Support</a></li>
               </ul>
             </div>
           </div>
-          <div className="mt-8 border-t border-gray-700 pt-8">
-            <p className="text-base text-gray-400 text-center">
+          <div className="mt-12 border-t border-gray-800 pt-8">
+            <p className="text-gray-400 text-center">
               &copy; 2025 ISES - Intelligent Student Evaluation System. All rights reserved.
             </p>
           </div>
