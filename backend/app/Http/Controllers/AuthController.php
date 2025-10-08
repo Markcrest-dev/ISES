@@ -20,7 +20,7 @@ class AuthController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
             'role' => 'required|in:student,instructor,admin',
-            'student_id' => 'required_if:role,student|string|max:255',
+            'student_id' => 'required_if:role,student|nullable|string|max:255',
             'program' => 'required_if:role,student|nullable|string|max:255',
             'year_of_study' => 'required_if:role,student|nullable|integer|min:1|max:10',
         ]);
