@@ -58,8 +58,21 @@ const Signup: React.FC = () => {
       }
     }
     
+    // For instructors/admins, step 2 is the security step, so we don't increment further
+    if (step === 2 && formData.role !== 'student') {
+      // Validation for password fields for instructors/admins
+      if (!formData.password || !formData.confirmPassword) {
+        setError('Please fill in all password fields');
+        return;
+      }
+    }
+    
     setError('');
-    setStep(step + 1);
+    
+    // For instructors/admins, step 2 is the last step, so we don't increment
+    if (!(step === 2 && formData.role !== 'student')) {
+      setStep(step + 1);
+    }
   };
 
   const prevStep = () => {
@@ -72,28 +85,32 @@ const Signup: React.FC = () => {
     setLoading(true);
     setError('');
     
-    // Password validation
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
-      setLoading(false);
-      return;
-    }
+    // Password validation - only validate if we're on the security step
+    const isOnSecurityStep = (formData.role === 'student' && step === 3) || (formData.role !== 'student' && step === 2);
     
-    if (formData.password.length < 8) {
-      setError('Password must be at least 8 characters long');
-      setLoading(false);
-      return;
-    }
-    
-    // Password strength validation
-    const hasUpperCase = /[A-Z]/.test(formData.password);
-    const hasLowerCase = /[a-z]/.test(formData.password);
-    const hasNumbers = /\d/.test(formData.password);
-    
-    if (!hasUpperCase || !hasLowerCase || !hasNumbers) {
-      setError('Password must contain uppercase, lowercase letters and numbers');
-      setLoading(false);
-      return;
+    if (isOnSecurityStep) {
+      if (formData.password !== formData.confirmPassword) {
+        setError('Passwords do not match');
+        setLoading(false);
+        return;
+      }
+      
+      if (formData.password.length < 8) {
+        setError('Password must be at least 8 characters long');
+        setLoading(false);
+        return;
+      }
+      
+      // Password strength validation
+      const hasUpperCase = /[A-Z]/.test(formData.password);
+      const hasLowerCase = /[a-z]/.test(formData.password);
+      const hasNumbers = /\d/.test(formData.password);
+      
+      if (!hasUpperCase || !hasLowerCase || !hasNumbers) {
+        setError('Password must contain uppercase, lowercase letters and numbers');
+        setLoading(false);
+        return;
+      }
     }
     
     if (!formData.agreeToTerms) {
@@ -103,16 +120,23 @@ const Signup: React.FC = () => {
     }
     
     try {
-      // Register the user
-      const response = await authService.register({
+      // Prepare registration data based on user role
+      const registrationData: any = {
         full_name: formData.full_name,
         email: formData.email,
         role: formData.role,
-        student_id: formData.student_id,
-        program: formData.program,
-        year_of_study: formData.year_of_study,
         password: formData.password
-      });
+      };
+      
+      // Only include student-specific fields for students
+      if (formData.role === 'student') {
+        registrationData.student_id = formData.student_id;
+        registrationData.program = formData.program;
+        registrationData.year_of_study = formData.year_of_study;
+      }
+      
+      // Register the user
+      const response = await authService.register(registrationData);
       
       // Store the token and user data
       localStorage.setItem('auth_token', response.token);
@@ -171,7 +195,15 @@ const Signup: React.FC = () => {
           </div>
         </div>
         
-        <form className="mt-8 space-y-6" onSubmit={step === (formData.role === 'student' ? 3 : 2) ? handleSubmit : (e) => { e.preventDefault(); nextStep(); }}>
+        <form className="mt-8 space-y-6" onSubmit={(e) => {
+          e.preventDefault();
+          // For all users, submit when they reach the security step
+          if ((formData.role === 'student' && step === 3) || (formData.role !== 'student' && step === 2)) {
+            handleSubmit(e);
+          } else {
+            nextStep();
+          }
+        }}>
           {error && (
             <div className="rounded-md bg-red-50 p-4">
               <div className="text-sm text-red-700">

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registration Flow Test</title>
+</head>
+<body>
+    <h1>Registration Flow Test</h1>
+    
+    <h2>Current Issue Analysis</h2>
+    <p>Based on the code analysis, here's what's happening:</p>
+    
+    <h3>For Students:</h3>
+    <ol>
+        <li>Step 1: Enter basic info (name, email, role=student)</li>
+        <li>Step 2: Enter academic details (student_id, program, year_of_study)</li>
+        <li>Step 3: Enter password and confirm password</li>
+        <li>Form submits on step 3</li>
+    </ol>
+    
+    <h3>For Instructors/Admins:</h3>
+    <ol>
+        <li>Step 1: Enter basic info (name, email, role=instructor or admin)</li>
+        <li>Step 2: Should enter password and confirm password, then submit</li>
+    </ol>
+    
+    <p>But the issue is that the form submission logic tries to submit on step 2 for instructors/admins, 
+    before they've had a chance to fill in the password confirmation field.</p>
+    
+    <h2>Proposed Fix</h2>
+    <p>The form submission logic needs to be updated to ensure that:</p>
+    <ol>
+        <li>Instructors and admins get to the security step (step 2) before submitting</li>
+        <li>The password validation in handleSubmit works correctly for all user types</li>
+    </ol>
+    
+    <h2>Solution</h2>
+    <p>Update the form submission logic in Signup.tsx to:</p>
+    <pre>
+// Current logic:
+onSubmit={step === (formData.role === 'student' ? 3 : 2) ? handleSubmit : (e) => { e.preventDefault(); nextStep(); }}
+
+// Should be updated to ensure instructors/admins reach the security step
+    </pre>
+</body>
+</html>
