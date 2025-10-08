@@ -7,13 +7,15 @@ const api = axios.create({
     'Content-Type': 'application/json',
     'Accept': 'application/json',
   },
-  withCredentials: true, // Required for sending cookies
 });
 
 // Add request interceptor for handling auth tokens
 api.interceptors.request.use(
   (config) => {
-    // You can add auth token logic here if needed
+    const token = localStorage.getItem('auth_token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
   (error) => {

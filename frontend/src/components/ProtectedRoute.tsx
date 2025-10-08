@@ -1,5 +1,6 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -7,19 +8,20 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles }) => {
-  // Mock user data - in a real app, this would come from context or state management
-  const currentUser = {
-    role: 'student', // This would be dynamically determined
-    isAuthenticated: true // This would be dynamically determined
-  };
+  const { user, loading } = useAuth();
+
+  // Show loading state while checking authentication
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   // Check if user is authenticated
-  if (!currentUser.isAuthenticated) {
+  if (!user) {
     return <Navigate to="/login" replace />;
   }
 
   // Check if user has required role
-  if (!allowedRoles.includes(currentUser.role)) {
+  if (!allowedRoles.includes(user.role)) {
     return <Navigate to="/unauthorized" replace />;
   }
 

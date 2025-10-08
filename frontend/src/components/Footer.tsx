@@ -103,10 +103,10 @@ const Footer: React.FC = () => {
                 Email: info@ises.edu
               </li>
               <li className="text-gray-300 text-sm">
-                Phone: +234 123 456 7890
+                Phone: +234 816 468 5389
               </li>
               <li className="text-gray-300 text-sm">
-                Address: University of Nigeria, Nsukka
+                Address: Nnamdi Azikiwe University, Awka
               </li>
             </ul>
           </div>

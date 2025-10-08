@@ -1,8 +1,18 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 
 const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user, logout } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
 
   return (
     <nav className="bg-white shadow-sm fixed w-full z-50">
@@ -10,10 +20,13 @@ const Navbar: React.FC = () => {
         <div className="flex justify-between h-16">
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
-              <Link to="/" className="text-2xl font-bold text-blue-600">
-                ISES
-              </Link>
-            </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
+                    <span className="text-white font-bold text-xl">I</span>
+                  </div>
+                  <span className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">ISES</span>
+                </div>
+              </div>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
               <Link
                 to="/"
@@ -44,18 +57,32 @@ const Navbar: React.FC = () => {
           
           <div className="flex items-center">
             <div className="hidden sm:flex sm:items-center sm:space-x-4">
-              <Link
-                to="/login"
-                className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900"
-              >
-                Login
-              </Link>
-              <Link
-                to="/register"
-                className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md"
-              >
-                Get Started
-              </Link>
+              {user ? (
+                <>
+                  <span className="text-sm text-gray-700">Welcome, {user.full_name}</span>
+                  <button
+                    onClick={handleLogout}
+                    className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900"
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/login"
+                    className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    to="/signup"
+                    className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md"
+                  >
+                    Get Started
+                  </Link>
+                </>
+              )}
             </div>
             
             {/* Mobile menu button */}
@@ -109,18 +136,31 @@ const Navbar: React.FC = () => {
             >
               Contact
             </Link>
-            <Link
-              to="/login"
-              className="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50"
-            >
-              Login
-            </Link>
-            <Link
-              to="/register"
-              className="block pl-3 pr-4 py-2 text-base font-medium text-white bg-blue-600 hover:bg-blue-700"
-            >
-              Get Started
-            </Link>
+            {user ? (
+              <>
+                <button
+                  onClick={handleLogout}
+                  className="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 w-full text-left"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/register"
+                  className="block pl-3 pr-4 py-2 text-base font-medium text-white bg-blue-600 hover:bg-blue-700"
+                >
+                  Get Started
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}

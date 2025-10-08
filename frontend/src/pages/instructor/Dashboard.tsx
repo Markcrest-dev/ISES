@@ -1,13 +1,26 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
 
 const InstructorDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('courses');
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
 
   // Mock data for instructor
   const instructorData = {
-    name: "Dr. Jane Smith",
+    name: user?.full_name || "Dr. Jane Smith",
     department: "Computer Science",
-    email: "jane.smith@university.edu",
+    email: user?.email || "jane.smith@university.edu",
     courses: 3,
     students: 85
   };
@@ -33,7 +46,7 @@ const InstructorDashboard: React.FC = () => {
           <h1 className="text-2xl font-bold text-gray-900">Instructor Dashboard</h1>
           <div className="flex items-center">
             <span className="mr-4 text-sm text-gray-700">Welcome, {instructorData.name}</span>
-            <button className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700">
+            <button className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700" onClick={handleLogout}>
               Logout
             </button>
           </div>

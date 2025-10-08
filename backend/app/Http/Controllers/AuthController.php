@@ -18,17 +18,18 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'full_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => 'required|string|min:8',
             'role' => 'required|in:student,instructor,admin',
             'student_id' => 'required_if:role,student|string|max:255',
-            'program' => 'nullable|string|max:255',
-            'year_of_study' => 'nullable|integer|min:1|max:10',
+            'program' => 'required_if:role,student|nullable|string|max:255',
+            'year_of_study' => 'required_if:role,student|nullable|integer|min:1|max:10',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'message' => 'Validation failed',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
+                'details' => $validator->errors()->toArray()
             ], 422);
         }
 
@@ -37,9 +38,9 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
-            'student_id' => $request->student_id,
-            'program' => $request->program,
-            'year_of_study' => $request->year_of_study,
+            'student_id' => $request->role === 'student' ? $request->student_id : null,
+            'program' => $request->role === 'student' ? $request->program : null,
+            'year_of_study' => $request->role === 'student' ? $request->year_of_study : null,
         ]);
 
         $token = $user->createToken('auth-token')->plainTextToken;
@@ -64,7 +65,8 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'message' => 'Validation failed',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
+                'details' => $validator->errors()->toArray()
             ], 422);
         }
 

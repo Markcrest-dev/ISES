@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { authService } from '../../services/authService';
 
 const Signup: React.FC = () => {
   const [step, setStep] = useState(1);
@@ -102,10 +103,19 @@ const Signup: React.FC = () => {
     }
     
     try {
-      // In a real app, you would call an API to register the user
-      // For now, we'll simulate a successful registration and login
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      await login(formData.email, formData.password);
+      // Register the user
+      const response = await authService.register({
+        full_name: formData.full_name,
+        email: formData.email,
+        role: formData.role,
+        student_id: formData.student_id,
+        program: formData.program,
+        year_of_study: formData.year_of_study,
+        password: formData.password
+      });
+      
+      // Store the token and user data
+      localStorage.setItem('auth_token', response.token);
       
       // Redirect based on user role
       if (formData.role === 'student') {
@@ -115,8 +125,8 @@ const Signup: React.FC = () => {
       } else {
         navigate('/admin/dashboard');
       }
-    } catch (err) {
-      setError('Registration failed. Please try again.');
+    } catch (err: any) {
+      setError(err.message || 'Registration failed. Please try again.');
     } finally {
       setLoading(false);
     }
