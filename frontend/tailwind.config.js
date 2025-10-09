@@ -3,6 +3,7 @@ module.exports = {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
+  darkMode: 'class', // Enable class-based dark mode
   theme: {
     extend: {
       colors: {
@@ -44,6 +45,27 @@ module.exports = {
           50: '#fef2f2',
           500: '#ef4444',
           700: '#b91c1c',
+        },
+        // Dark blue theme colors
+        dark: {
+          50: '#e8eaf6',
+          100: '#c5cae9',
+          200: '#9fa8da',
+          300: '#7986cb',
+          400: '#5c6bc0',
+          500: '#3f51b5',
+          600: '#3949ab',
+          700: '#303f9f',
+          800: '#283593',
+          900: '#1a237e',
+          950: '#0d1117', // Very dark blue-black
+        },
+        // Background colors for dark mode
+        'dark-bg': {
+          primary: '#0a0e27', // Very dark blue
+          secondary: '#0f1535', // Dark blue
+          tertiary: '#141b3d', // Slightly lighter dark blue
+          hover: '#1a2350', // Hover state
         },
       },
       fontFamily: {

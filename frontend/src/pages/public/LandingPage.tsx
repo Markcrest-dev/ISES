@@ -50,35 +50,35 @@ const LandingPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-dark-bg-primary dark:via-dark-bg-secondary dark:to-dark-900">
       {/* Navigation */}
       <Navbar />
 
       {/* Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 pt-20">
-        <div className="absolute inset-0 bg-grid-slate-900/[0.04] [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))]"></div>
+      <div className="relative overflow-hidden bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-dark-bg-secondary dark:via-dark-bg-tertiary dark:to-dark-900 pt-20">
+        <div className="absolute inset-0 bg-grid-slate-900/[0.04] dark:bg-grid-slate-100/[0.02] [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] dark:[mask-image:linear-gradient(0deg,#0a0e27,rgba(10,14,39,0.6))]"></div>
         <div className="max-w-7xl mx-auto py-20 px-4 sm:py-32 sm:px-6 lg:px-8 relative">
           <div className="text-center">
             <div className="inline-block">
-              <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800 mb-8 animate-pulse">
+              <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-300 mb-8 animate-pulse">
                 🚀 Transform Your Learning Experience
               </span>
             </div>
-            <h1 className="text-5xl font-extrabold text-gray-900 sm:text-6xl sm:tracking-tight lg:text-7xl">
+            <h1 className="text-5xl font-extrabold text-gray-900 dark:text-white sm:text-6xl sm:tracking-tight lg:text-7xl">
               <span className="block">Intelligent Student</span>
-              <span className="block bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Evaluation System</span>
+              <span className="block bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">Evaluation System</span>
             </h1>
-            <p className="mt-8 max-w-2xl mx-auto text-xl text-gray-600 leading-relaxed">
+            <p className="mt-8 max-w-2xl mx-auto text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
               AI-powered evaluation platform that provides instant feedback, personalized recommendations, and predictive analytics for better learning outcomes.
             </p>
             <div className="mt-12 flex justify-center gap-4">
-              <a href="/signup" className="group relative inline-flex items-center px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-lg font-semibold rounded-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-200">
+              <a href="/signup" className="group relative inline-flex items-center px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-blue-600 dark:to-purple-600 text-white text-lg font-semibold rounded-xl hover:shadow-2xl dark:hover:shadow-blue-900/50 transform hover:-translate-y-1 transition-all duration-200">
                 <span>Get Started Free</span>
                 <svg className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>
               </a>
-              <a href="#how-it-works" className="inline-flex items-center px-8 py-4 bg-white text-indigo-600 border-2 border-indigo-600 text-lg font-semibold rounded-xl hover:bg-indigo-50 transform hover:-translate-y-1 transition-all duration-200">
+              <a href="#how-it-works" className="inline-flex items-center px-8 py-4 bg-white dark:bg-dark-bg-tertiary text-indigo-600 dark:text-blue-400 border-2 border-indigo-600 dark:border-blue-500 text-lg font-semibold rounded-xl hover:bg-indigo-50 dark:hover:bg-dark-bg-hover transform hover:-translate-y-1 transition-all duration-200">
                 Learn More
               </a>
             </div>
@@ -87,33 +87,33 @@ const LandingPage: React.FC = () => {
                 <svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
-                <span className="text-gray-700 font-medium">1000+ Active Students</span>
+                <span className="text-gray-700 dark:text-gray-300 font-medium">1000+ Active Students</span>
               </div>
               <div className="flex items-center">
                 <svg className="w-5 h-5 text-yellow-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                 </svg>
-                <span className="text-gray-700 font-medium">95% Satisfaction</span>
+                <span className="text-gray-700 dark:text-gray-300 font-medium">95% Satisfaction</span>
               </div>
               <div className="flex items-center">
                 <svg className="w-5 h-5 text-blue-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
                 </svg>
-                <span className="text-gray-700 font-medium">24/7 Availability</span>
+                <span className="text-gray-700 dark:text-gray-300 font-medium">24/7 Availability</span>
               </div>
             </div>
           </div>
         </div>
-        <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white to-transparent"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white dark:from-dark-bg-primary to-transparent"></div>
       </div>
 
       {/* Features Section */}
-      <div id="features" className="py-20 bg-white">
+      <div id="features" className="py-20 bg-white dark:bg-dark-bg-primary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <span className="text-indigo-600 font-semibold text-sm uppercase tracking-wide">Features</span>
-            <h2 className="mt-2 text-4xl font-extrabold text-gray-900">Powerful Features for Modern Learning</h2>
-            <p className="mt-4 max-w-2xl text-xl text-gray-600 mx-auto">
+            <span className="text-indigo-600 dark:text-blue-400 font-semibold text-sm uppercase tracking-wide">Features</span>
+            <h2 className="mt-2 text-4xl font-extrabold text-gray-900 dark:text-white">Powerful Features for Modern Learning</h2>
+            <p className="mt-4 max-w-2xl text-xl text-gray-600 dark:text-gray-300 mx-auto">
               Everything you need to enhance the learning experience
             </p>
           </div>
@@ -172,18 +172,18 @@ const LandingPage: React.FC = () => {
               ].map((feature, index) => (
                 <div
                   key={index}
-                  className="group relative bg-white p-8 rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100"
+                  className="group relative bg-white dark:bg-dark-bg-secondary p-8 rounded-2xl shadow-md dark:shadow-black/30 hover:shadow-2xl dark:hover:shadow-blue-900/50 transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 dark:border-dark-bg-hover"
                 >
                   <div className={`inline-flex p-4 rounded-xl bg-gradient-to-br ${feature.gradient} shadow-lg transform group-hover:scale-110 transition-transform duration-300`}>
                     <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       {feature.icon}
                     </svg>
                   </div>
-                  <h3 className="mt-6 text-xl font-semibold text-gray-900">{feature.title}</h3>
-                  <p className="mt-3 text-base text-gray-600 leading-relaxed">
+                  <h3 className="mt-6 text-xl font-semibold text-gray-900 dark:text-white">{feature.title}</h3>
+                  <p className="mt-3 text-base text-gray-600 dark:text-gray-300 leading-relaxed">
                     {feature.description}
                   </p>
-                  <div className="mt-4 flex items-center text-indigo-600 font-medium">
+                  <div className="mt-4 flex items-center text-indigo-600 dark:text-blue-400 font-medium">
                     <span className="text-sm">Learn more</span>
                     <svg className="ml-2 w-4 h-4 group-hover:translate-x-2 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
@@ -197,12 +197,12 @@ const LandingPage: React.FC = () => {
       </div>
 
       {/* How It Works Section */}
-      <div id="how-it-works" className="py-20 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+      <div id="how-it-works" className="py-20 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-dark-bg-secondary dark:via-dark-bg-tertiary dark:to-dark-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <span className="text-indigo-600 font-semibold text-sm uppercase tracking-wide">Process</span>
-            <h2 className="mt-2 text-4xl font-extrabold text-gray-900">How It Works</h2>
-            <p className="mt-4 max-w-2xl text-xl text-gray-600 mx-auto">
+            <span className="text-indigo-600 dark:text-blue-400 font-semibold text-sm uppercase tracking-wide">Process</span>
+            <h2 className="mt-2 text-4xl font-extrabold text-gray-900 dark:text-white">How It Works</h2>
+            <p className="mt-4 max-w-2xl text-xl text-gray-600 dark:text-gray-300 mx-auto">
               Simple steps to transform your academic journey
             </p>
           </div>
@@ -221,11 +221,11 @@ const LandingPage: React.FC = () => {
                       {item.step}
                     </div>
                     {index < 3 && (
-                      <div className="hidden lg:block absolute top-8 left-full w-full h-0.5 bg-gradient-to-r from-indigo-200 to-purple-200"></div>
+                      <div className="hidden lg:block absolute top-8 left-full w-full h-0.5 bg-gradient-to-r from-indigo-200 to-purple-200 dark:from-blue-800 dark:to-purple-800"></div>
                     )}
                   </div>
-                  <h3 className="mt-6 text-xl font-semibold text-gray-900">{item.title}</h3>
-                  <p className="mt-3 text-base text-gray-600 leading-relaxed">
+                  <h3 className="mt-6 text-xl font-semibold text-gray-900 dark:text-white">{item.title}</h3>
+                  <p className="mt-3 text-base text-gray-600 dark:text-gray-300 leading-relaxed">
                     {item.description}
                   </p>
                 </div>
@@ -236,27 +236,27 @@ const LandingPage: React.FC = () => {
       </div>
 
       {/* Testimonials Section */}
-      <div id="testimonials" className="bg-white py-20">
+      <div id="testimonials" className="bg-white dark:bg-dark-bg-primary py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <span className="text-indigo-600 font-semibold text-sm uppercase tracking-wide">Testimonials</span>
-            <h2 className="mt-2 text-4xl font-extrabold text-gray-900">What Our Users Say</h2>
-            <p className="mt-4 max-w-2xl text-xl text-gray-600 mx-auto">
+            <span className="text-indigo-600 dark:text-blue-400 font-semibold text-sm uppercase tracking-wide">Testimonials</span>
+            <h2 className="mt-2 text-4xl font-extrabold text-gray-900 dark:text-white">What Our Users Say</h2>
+            <p className="mt-4 max-w-2xl text-xl text-gray-600 dark:text-gray-300 mx-auto">
               Join thousands of satisfied students and educators
             </p>
           </div>
           <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-3">
             {testimonials.map((testimonial, index) => (
-              <div key={index} className="group bg-gradient-to-br from-white to-indigo-50 rounded-2xl shadow-md hover:shadow-2xl p-8 transition-all duration-300 transform hover:-translate-y-2 border border-indigo-100">
+              <div key={index} className="group bg-gradient-to-br from-white to-indigo-50 dark:from-dark-bg-secondary dark:to-dark-bg-tertiary rounded-2xl shadow-md dark:shadow-black/30 hover:shadow-2xl dark:hover:shadow-blue-900/50 p-8 transition-all duration-300 transform hover:-translate-y-2 border border-indigo-100 dark:border-dark-bg-hover">
                 <div className="flex items-center mb-6">
                   <img
-                    className="h-14 w-14 rounded-full ring-4 ring-indigo-100"
+                    className="h-14 w-14 rounded-full ring-4 ring-indigo-100 dark:ring-blue-900"
                     src={testimonial.image}
                     alt={testimonial.name}
                   />
                   <div className="ml-4">
-                    <h3 className="text-lg font-semibold text-gray-900">{testimonial.name}</h3>
-                    <p className="text-sm text-gray-600">{testimonial.role}</p>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{testimonial.name}</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{testimonial.role}</p>
                   </div>
                 </div>
                 <div className="flex mb-4">
@@ -266,7 +266,7 @@ const LandingPage: React.FC = () => {
                     </svg>
                   ))}
                 </div>
-                <p className="text-gray-700 leading-relaxed italic">"{testimonial.text}"</p>
+                <p className="text-gray-700 dark:text-gray-300 leading-relaxed italic">"{testimonial.text}"</p>
               </div>
             ))}
           </div>
@@ -274,23 +274,23 @@ const LandingPage: React.FC = () => {
       </div>
 
       {/* FAQ Section */}
-      <div id="faq" className="bg-gradient-to-br from-slate-50 to-indigo-50 py-20">
+      <div id="faq" className="bg-gradient-to-br from-slate-50 to-indigo-50 dark:from-dark-bg-secondary dark:to-dark-900 py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <span className="text-indigo-600 font-semibold text-sm uppercase tracking-wide">FAQ</span>
-            <h2 className="mt-2 text-4xl font-extrabold text-gray-900">Frequently Asked Questions</h2>
+            <span className="text-indigo-600 dark:text-blue-400 font-semibold text-sm uppercase tracking-wide">FAQ</span>
+            <h2 className="mt-2 text-4xl font-extrabold text-gray-900 dark:text-white">Frequently Asked Questions</h2>
           </div>
           <div className="mt-16 space-y-4">
             {faqs.map((faq, index) => (
-              <div key={index} className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
+              <div key={index} className="bg-white dark:bg-dark-bg-tertiary rounded-xl shadow-md dark:shadow-black/30 hover:shadow-lg dark:hover:shadow-blue-900/30 transition-shadow duration-300 overflow-hidden">
                 <button
                   className="w-full text-left px-8 py-6 focus:outline-none"
                   onClick={() => setActiveIndex(activeIndex === index ? null : index)}
                 >
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold text-gray-900">{faq.question}</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{faq.question}</h3>
                     <svg
-                      className={`w-6 h-6 text-indigo-600 transform transition-transform duration-200 ${activeIndex === index ? 'rotate-180' : ''}`}
+                      className={`w-6 h-6 text-indigo-600 dark:text-blue-400 transform transition-transform duration-200 ${activeIndex === index ? 'rotate-180' : ''}`}
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -299,7 +299,7 @@ const LandingPage: React.FC = () => {
                     </svg>
                   </div>
                   <div
-                    className={`mt-4 text-gray-600 leading-relaxed transition-all duration-300 ${activeIndex === index ? 'block' : 'hidden'}`}
+                    className={`mt-4 text-gray-600 dark:text-gray-300 leading-relaxed transition-all duration-300 ${activeIndex === index ? 'block' : 'hidden'}`}
                   >
                     {faq.answer}
                   </div>
@@ -311,16 +311,16 @@ const LandingPage: React.FC = () => {
       </div>
 
       {/* CTA Section */}
-      <div className="bg-gradient-to-r from-indigo-600 to-purple-600 py-20">
+      <div className="bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-blue-700 dark:to-purple-800 py-20">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h2 className="text-4xl font-extrabold text-white">
             Ready to Transform Your Learning?
           </h2>
-          <p className="mt-4 text-xl text-indigo-100">
+          <p className="mt-4 text-xl text-indigo-100 dark:text-blue-100">
             Join thousands of students and educators already using ISES
           </p>
           <div className="mt-8">
-            <a href="/signup" className="inline-flex items-center px-8 py-4 bg-white text-indigo-600 text-lg font-semibold rounded-xl hover:bg-indigo-50 transform hover:-translate-y-1 transition-all duration-200 shadow-xl">
+            <a href="/signup" className="inline-flex items-center px-8 py-4 bg-white dark:bg-gray-100 text-indigo-600 dark:text-blue-700 text-lg font-semibold rounded-xl hover:bg-indigo-50 dark:hover:bg-white transform hover:-translate-y-1 transition-all duration-200 shadow-xl dark:shadow-blue-900/50">
               <span>Get Started Now</span>
               <svg className="ml-2 w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
