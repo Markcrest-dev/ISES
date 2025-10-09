@@ -5,6 +5,8 @@ import AdminDashboard from './pages/admin/Dashboard';
 import Login from './pages/auth/Login';
 import Signup from './pages/auth/Signup';
 import InstructorDashboard from './pages/instructor/Dashboard';
+import EvaluateStudent from './pages/instructor/EvaluateStudent';
+import ManageStudents from './pages/instructor/ManageStudents';
 import AboutPage from './pages/public/AboutPage';
 import ContactPage from './pages/public/ContactPage';
 import FeaturesPage from './pages/public/FeaturesPage';
@@ -12,6 +14,7 @@ import LandingPage from './pages/public/LandingPage';
 import PrivacyPolicy from './pages/public/PrivacyPolicy';
 import TermsOfService from './pages/public/TermsOfService';
 import StudentDashboard from './pages/student/Dashboard';
+import MyEvaluations from './pages/student/MyEvaluations';
 
 function App() {
   return (
@@ -30,23 +33,47 @@ function App() {
           <Route path="/test" element={<ApiTest />} />
           
           {/* Student routes */}
-          <Route 
-            path="/student/dashboard" 
+          <Route
+            path="/student/dashboard"
             element={
               <ProtectedRoute allowedRoles={['student']}>
                 <StudentDashboard />
               </ProtectedRoute>
-            } 
+            }
+          />
+          <Route
+            path="/student/evaluations"
+            element={
+              <ProtectedRoute allowedRoles={['student']}>
+                <MyEvaluations />
+              </ProtectedRoute>
+            }
           />
           
           {/* Instructor routes */}
-          <Route 
-            path="/instructor/dashboard" 
+          <Route
+            path="/instructor/dashboard"
             element={
               <ProtectedRoute allowedRoles={['instructor']}>
                 <InstructorDashboard />
               </ProtectedRoute>
-            } 
+            }
+          />
+          <Route
+            path="/instructor/evaluate"
+            element={
+              <ProtectedRoute allowedRoles={['instructor']}>
+                <EvaluateStudent />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/instructor/manage-students"
+            element={
+              <ProtectedRoute allowedRoles={['instructor']}>
+                <ManageStudents />
+              </ProtectedRoute>
+            }
           />
           
           {/* Admin routes */}

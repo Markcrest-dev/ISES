@@ -71,7 +71,22 @@ export const authService = {
       const response = await api.post<RegisterResponse>('/auth/register', data);
       return response.data;
     } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'Registration failed');
+      // Extract detailed error information
+      const errorMessage = error.response?.data?.message || 'Registration failed';
+      const errorDetails = error.response?.data?.errors || error.response?.data?.details;
+
+      // If there are detailed validation errors, format them nicely
+      if (errorDetails) {
+        const errorMessages = Object.entries(errorDetails)
+          .map(([field, messages]: [string, any]) => {
+            const messageArray = Array.isArray(messages) ? messages : [messages];
+            return `${field}: ${messageArray.join(', ')}`;
+          })
+          .join('; ');
+        throw new Error(`${errorMessage} - ${errorMessages}`);
+      }
+
+      throw new Error(errorMessage);
     }
   },
 

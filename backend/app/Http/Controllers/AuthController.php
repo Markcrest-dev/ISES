@@ -15,15 +15,22 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        // Base validation rules
+        $rules = [
             'full_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
             'role' => 'required|in:student,instructor,admin',
-            'student_id' => 'required_if:role,student|nullable|string|max:255',
-            'program' => 'required_if:role,student|nullable|string|max:255',
-            'year_of_study' => 'required_if:role,student|nullable|integer|min:1|max:10',
-        ]);
+        ];
+
+        // Add student-specific validation rules only for student role
+        if ($request->role === 'student') {
+            $rules['student_id'] = 'required|string|max:255';
+            $rules['program'] = 'required|string|max:255';
+            $rules['year_of_study'] = 'required|integer|min:1|max:10';
+        }
+
+        $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             return response()->json([

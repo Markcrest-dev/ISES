@@ -127,14 +127,17 @@ const Signup: React.FC = () => {
         role: formData.role,
         password: formData.password
       };
-      
+
       // Only include student-specific fields for students
       if (formData.role === 'student') {
         registrationData.student_id = formData.student_id;
         registrationData.program = formData.program;
         registrationData.year_of_study = formData.year_of_study;
       }
-      
+
+      // Debug: Log the data being sent (remove in production)
+      console.log('Registration data being sent:', registrationData);
+
       // Register the user
       const response = await authService.register(registrationData);
       

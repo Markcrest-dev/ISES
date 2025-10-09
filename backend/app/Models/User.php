@@ -46,4 +46,38 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    /**
+     * Get courses taught by this instructor
+     */
+    public function taughtCourses()
+    {
+        return $this->hasMany(Course::class, 'instructor_id');
+    }
+
+    /**
+     * Get courses enrolled by this student
+     */
+    public function enrolledCourses()
+    {
+        return $this->belongsToMany(Course::class, 'enrollments', 'student_id', 'course_id')
+                    ->withPivot('status')
+                    ->withTimestamps();
+    }
+
+    /**
+     * Get evaluations received by this student
+     */
+    public function evaluationsReceived()
+    {
+        return $this->hasMany(Evaluation::class, 'student_id');
+    }
+
+    /**
+     * Get evaluations created by this instructor
+     */
+    public function evaluationsGiven()
+    {
+        return $this->hasMany(Evaluation::class, 'instructor_id');
+    }
 }
