@@ -16,6 +16,12 @@ interface Student {
   email: string;
   student_id: string;
   program: string;
+  total_evaluations_in_course?: number;
+  average_grade_in_course?: number;
+  last_evaluation_in_course?: {
+    evaluation_date: string;
+    grade: string;
+  };
 }
 
 interface Enrollment {
@@ -28,6 +34,7 @@ const ManageStudents: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [selectedCourse, setSelectedCourse] = useState('');
   const [enrolledStudents, setEnrolledStudents] = useState<Enrollment[]>([]);
+  const [studentsWithEvaluations, setStudentsWithEvaluations] = useState<Student[]>([]);
   const [availableStudents, setAvailableStudents] = useState<Student[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState('');
@@ -43,6 +50,7 @@ const ManageStudents: React.FC = () => {
     if (selectedCourse) {
       fetchEnrolledStudents();
       fetchAvailableStudents();
+      fetchStudentsWithEvaluations();
     }
   }, [selectedCourse]);
 
@@ -80,6 +88,22 @@ const ManageStudents: React.FC = () => {
     } catch (err) {
       console.error('Error fetching available students:', err);
     }
+  };
+
+  const fetchStudentsWithEvaluations = async () => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      const response = await axios.get(`${API_URL}/courses/${selectedCourse}/students/evaluations`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setStudentsWithEvaluations(response.data.students);
+    } catch (err) {
+      console.error('Error fetching students with evaluations:', err);
+    }
+  };
+
+  const handleEvaluateStudent = (studentId: number) => {
+    navigate(`/instructor/evaluate-student?course=${selectedCourse}&student=${studentId}`);
   };
 
   const handleAddStudent = async () => {
@@ -210,10 +234,16 @@ const ManageStudents: React.FC = () => {
                         Name
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Email
+                        Program
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Program
+                        Evaluations
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Avg. Grade
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Last Evaluation
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Actions
@@ -223,35 +253,65 @@ const ManageStudents: React.FC = () => {
                   <tbody className="bg-white divide-y divide-gray-200">
                     {enrolledStudents.length === 0 ? (
                       <tr>
-                        <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
+                        <td colSpan={7} className="px-6 py-4 text-center text-gray-500">
                           No students enrolled yet
                         </td>
                       </tr>
                     ) : (
-                      enrolledStudents.map((enrollment) => (
-                        <tr key={enrollment.id}>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {enrollment.student.student_id}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            {enrollment.student.full_name}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {enrollment.student.email}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {enrollment.student.program}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <button
-                              onClick={() => handleRemoveStudent(enrollment.id)}
-                              className="text-red-600 hover:text-red-900"
-                            >
-                              Remove
-                            </button>
-                          </td>
-                        </tr>
-                      ))
+                      enrolledStudents.map((enrollment) => {
+                        const studentEvalData = studentsWithEvaluations.find(s => s.id === enrollment.student.id);
+                        return (
+                          <tr key={enrollment.id}>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              {enrollment.student.student_id}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                              {enrollment.student.full_name}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              {enrollment.student.program}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              {studentEvalData?.total_evaluations_in_course || 0}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm">
+                              {studentEvalData?.average_grade_in_course ? (
+                                <span className="font-medium text-gray-900">
+                                  {studentEvalData.average_grade_in_course.toFixed(1)}%
+                                </span>
+                              ) : (
+                                <span className="text-gray-400">Not yet evaluated</span>
+                              )}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              {studentEvalData?.last_evaluation_in_course ? (
+                                <span>
+                                  {new Date(studentEvalData.last_evaluation_in_course.evaluation_date).toLocaleDateString()}
+                                  <span className="ml-2 px-2 py-1 text-xs rounded bg-gray-100">
+                                    {studentEvalData.last_evaluation_in_course.grade}
+                                  </span>
+                                </span>
+                              ) : (
+                                <span className="text-gray-400">N/A</span>
+                              )}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                              <button
+                                onClick={() => handleEvaluateStudent(enrollment.student.id)}
+                                className="text-indigo-600 hover:text-indigo-900"
+                              >
+                                Evaluate
+                              </button>
+                              <button
+                                onClick={() => handleRemoveStudent(enrollment.id)}
+                                className="text-red-600 hover:text-red-900"
+                              >
+                                Remove
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })
                     )}
                   </tbody>
                 </table>

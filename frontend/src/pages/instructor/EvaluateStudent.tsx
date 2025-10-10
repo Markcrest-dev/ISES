@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -20,6 +20,7 @@ interface Student {
 
 const EvaluateStudent: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [courses, setCourses] = useState<Course[]>([]);
   const [students, setStudents] = useState<Student[]>([]);
   const [selectedCourse, setSelectedCourse] = useState('');
@@ -43,6 +44,20 @@ const EvaluateStudent: React.FC = () => {
   useEffect(() => {
     fetchCourses();
   }, []);
+
+  useEffect(() => {
+    // Check for URL parameters
+    const courseParam = searchParams.get('course');
+    const studentParam = searchParams.get('student');
+
+    if (courseParam) {
+      setSelectedCourse(courseParam);
+    }
+
+    if (studentParam) {
+      setFormData(prev => ({ ...prev, student_id: studentParam }));
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if (selectedCourse) {

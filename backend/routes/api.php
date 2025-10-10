@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\EvaluationController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,6 +51,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/evaluations', [EvaluationController::class, 'store']);
     Route::put('/evaluations/{id}', [EvaluationController::class, 'update']);
     Route::delete('/evaluations/{id}', [EvaluationController::class, 'destroy']);
+
+    // User/Student routes
+    Route::get('/students', [UserController::class, 'getStudents']);
+    Route::get('/students/unevaluated', [UserController::class, 'getUnevaluatedStudents']);
+    Route::get('/students/{studentId}/profile', [UserController::class, 'getStudentProfile']);
+    Route::get('/courses/{courseId}/students/evaluations', [UserController::class, 'getCourseStudentsWithEvaluations']);
 });
 
 Route::get('/test', function () {
