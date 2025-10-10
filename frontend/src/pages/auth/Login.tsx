@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuthContext } from '../../contexts/AuthContext';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -10,7 +10,7 @@ const Login: React.FC = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { login } = useAuth();
+  const { login } = useAuthContext();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -19,8 +19,19 @@ const Login: React.FC = () => {
     setError('');
 
     try {
-      await login(email, password);
-      navigate('/student/dashboard');
+      const response = await login(email, password);
+
+      // Navigate based on user role
+      if (response.user.role === 'student') {
+        navigate('/student/dashboard');
+      } else if (response.user.role === 'instructor') {
+        navigate('/instructor/dashboard');
+      } else if (response.user.role === 'admin') {
+        navigate('/admin/dashboard');
+      } else {
+        // Default fallback
+        navigate('/');
+      }
     } catch (err) {
       setError('Invalid email or password. Please try again.');
     } finally {
@@ -149,9 +160,9 @@ const Login: React.FC = () => {
               </div>
 
               <div className="text-sm">
-                <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500 transition-colors duration-200">
+                <button type="button" className="font-medium text-indigo-600 hover:text-indigo-500 transition-colors duration-200">
                   Forgot password?
-                </a>
+                </button>
               </div>
             </div>
 

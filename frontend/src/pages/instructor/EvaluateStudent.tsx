@@ -25,6 +25,8 @@ const EvaluateStudent: React.FC = () => {
   const [students, setStudents] = useState<Student[]>([]);
   const [selectedCourse, setSelectedCourse] = useState('');
   const [loading, setLoading] = useState(false);
+  const [loadingCourses, setLoadingCourses] = useState(true);
+  const [loadingStudents, setLoadingStudents] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
@@ -67,26 +69,41 @@ const EvaluateStudent: React.FC = () => {
 
   const fetchCourses = async () => {
     try {
+      setLoadingCourses(true);
       const token = localStorage.getItem('auth_token');
       const response = await axios.get(`${API_URL}/courses`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setCourses(response.data.courses);
+      setError('');
     } catch (err) {
       console.error('Error fetching courses:', err);
+      setError('Failed to load courses. Please refresh the page.');
+    } finally {
+      setLoadingCourses(false);
     }
   };
 
   const fetchEnrolledStudents = async (courseId: string) => {
     try {
+      setLoadingStudents(true);
+      setStudents([]);
       const token = localStorage.getItem('auth_token');
       const response = await axios.get(`${API_URL}/courses/${courseId}/enrollments`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const enrolledStudents = response.data.enrollments.map((enrollment: any) => enrollment.student);
       setStudents(enrolledStudents);
+
+      // Clear student selection if previously selected student is not in this course
+      if (formData.student_id && !enrolledStudents.find((s: Student) => s.id.toString() === formData.student_id)) {
+        setFormData(prev => ({ ...prev, student_id: '' }));
+      }
     } catch (err) {
       console.error('Error fetching students:', err);
+      setError('Failed to load students for this course.');
+    } finally {
+      setLoadingStudents(false);
     }
   };
 
@@ -184,15 +201,24 @@ const EvaluateStudent: React.FC = () => {
                 value={selectedCourse}
                 onChange={(e) => setSelectedCourse(e.target.value)}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                disabled={loadingCourses}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-100"
               >
-                <option value="">-- Select a course --</option>
+                <option value="">
+                  {loadingCourses ? '-- Loading courses... --' : '-- Select a course --'}
+                </option>
                 {courses.map((course) => (
                   <option key={course.id} value={course.id}>
                     {course.course_code} - {course.course_name}
                   </option>
                 ))}
               </select>
+              {courses.length === 0 && !loadingCourses && (
+                <p className="mt-1 text-sm text-gray-500">No courses available</p>
+              )}
+              {courses.length > 0 && !loadingCourses && (
+                <p className="mt-1 text-sm text-gray-500">{courses.length} course(s) available</p>
+              )}
             </div>
 
             {/* Student Selection */}
@@ -205,16 +231,28 @@ const EvaluateStudent: React.FC = () => {
                 value={formData.student_id}
                 onChange={handleChange}
                 required
-                disabled={!selectedCourse}
+                disabled={!selectedCourse || loadingStudents}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-100"
               >
-                <option value="">-- Select a student --</option>
+                <option value="">
+                  {!selectedCourse
+                    ? '-- Select a course first --'
+                    : loadingStudents
+                    ? '-- Loading students... --'
+                    : '-- Select a student --'}
+                </option>
                 {students.map((student) => (
                   <option key={student.id} value={student.id}>
-                    {student.full_name} ({student.student_id})
+                    {student.full_name} ({student.student_id}) - {student.program}
                   </option>
                 ))}
               </select>
+              {selectedCourse && students.length === 0 && !loadingStudents && (
+                <p className="mt-1 text-sm text-yellow-600">No students enrolled in this course</p>
+              )}
+              {selectedCourse && students.length > 0 && !loadingStudents && (
+                <p className="mt-1 text-sm text-gray-500">{students.length} student(s) enrolled</p>
+              )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

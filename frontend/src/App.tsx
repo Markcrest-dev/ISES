@@ -1,6 +1,7 @@
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import ApiTest from './components/ApiTest';
 import ProtectedRoute from './components/ProtectedRoute';
+import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import AdminDashboard from './pages/admin/Dashboard';
 import Login from './pages/auth/Login';
@@ -19,10 +20,11 @@ import MyEvaluations from './pages/student/MyEvaluations';
 
 function App() {
   return (
-    <ThemeProvider>
-      <Router>
-        <div className="App">
-          <Routes>
+    <AuthProvider>
+      <ThemeProvider>
+        <Router>
+          <div className="App">
+            <Routes>
             {/* Public routes */}
             <Route path="/" element={<LandingPage />} />
             <Route path="/about" element={<AboutPage />} />
@@ -88,9 +90,10 @@ function App() {
               }
             />
           </Routes>
-        </div>
-      </Router>
-    </ThemeProvider>
+          </div>
+        </Router>
+      </ThemeProvider>
+    </AuthProvider>
   );
 }
 

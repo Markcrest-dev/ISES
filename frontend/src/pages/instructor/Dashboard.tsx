@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuthContext } from '../../contexts/AuthContext';
 
 const InstructorDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('courses');
-  const { user, logout } = useAuth();
+  const { user, logout } = useAuthContext();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -223,7 +223,7 @@ const InstructorDashboard: React.FC = () => {
                         {course.assignments}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <a href="#" className="text-indigo-600 hover:text-indigo-900">View Details</a>
+                        <button type="button" className="text-indigo-600 hover:text-indigo-900">View Details</button>
                       </td>
                     </tr>
                   ))}
@@ -282,8 +282,8 @@ const InstructorDashboard: React.FC = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <a href="#" className="text-indigo-600 hover:text-indigo-900 mr-3">Evaluate</a>
-                        <a href="#" className="text-gray-600 hover:text-gray-900">View</a>
+                        <button type="button" className="text-indigo-600 hover:text-indigo-900 mr-3">Evaluate</button>
+                        <button type="button" className="text-gray-600 hover:text-gray-900">View</button>
                       </td>
                     </tr>
                   ))}
