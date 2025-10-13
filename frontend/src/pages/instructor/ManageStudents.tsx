@@ -52,6 +52,7 @@ const ManageStudents: React.FC = () => {
       fetchAvailableStudents();
       fetchStudentsWithEvaluations();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCourse]);
 
   const fetchCourses = async () => {

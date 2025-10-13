@@ -65,6 +65,7 @@ const EvaluateStudent: React.FC = () => {
     if (selectedCourse) {
       fetchEnrolledStudents(selectedCourse);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCourse]);
 
   const fetchCourses = async () => {

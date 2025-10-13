@@ -4,7 +4,7 @@ import { useAuth } from '../../hooks/useAuth';
 
 const AdminDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -326,7 +326,7 @@ const AdminDashboard: React.FC = () => {
                         {alert.time}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <a href="#" className="text-indigo-600 hover:text-indigo-900">View Details</a>
+                        <button className="text-indigo-600 hover:text-indigo-900">View Details</button>
                       </td>
                     </tr>
                   ))}
