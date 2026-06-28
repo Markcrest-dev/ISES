@@ -92,7 +92,7 @@ DO NOT include any markdown formatting, code blocks, or text outside of the JSON
         student_id: submission.student_id,
         instructor_id: assignment.instructor_id,
         evaluation_type: 'assignment',
-        title: \`AI Evaluation: \${assignment.title}\`,
+        title: `AI Evaluation: ${assignment.title}`,
         description: 'Automatically graded by ISES AI Evaluator',
         score: evaluationData.score,
         max_score: assignment.total_points,
@@ -106,7 +106,7 @@ DO NOT include any markdown formatting, code blocks, or text outside of the JSON
       .select()
       .single();
 
-    if (evalError) throw new Error(\`Failed to save evaluation: \${evalError.message}\`);
+    if (evalError) throw new Error(`Failed to save evaluation: ${evalError.message}`);
 
     // 5. Update submission status
     const { error: updateError } = await supabase
@@ -114,7 +114,7 @@ DO NOT include any markdown formatting, code blocks, or text outside of the JSON
       .update({ status: 'graded' })
       .eq('id', submission_id);
 
-    if (updateError) throw new Error(\`Failed to update submission status: \${updateError.message}\`);
+    if (updateError) throw new Error(`Failed to update submission status: ${updateError.message}`);
 
     res.json({ success: true, evaluation });
 
@@ -126,5 +126,5 @@ DO NOT include any markdown formatting, code blocks, or text outside of the JSON
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
-  console.log(\`AI Evaluation Service running on port \${PORT}\`);
+  console.log(`AI Evaluation Service running on port ${PORT}`);
 });

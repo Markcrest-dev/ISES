@@ -4,7 +4,7 @@ const AI_SERVICE_URL = process.env.REACT_APP_AI_SERVICE_URL || 'http://localhost
 export const aiService = {
   triggerEvaluation: async (submissionId: number) => {
     try {
-      const response = await fetch(\`\${AI_SERVICE_URL}/api/evaluate\`, {
+      const response = await fetch(`${AI_SERVICE_URL}/api/evaluate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

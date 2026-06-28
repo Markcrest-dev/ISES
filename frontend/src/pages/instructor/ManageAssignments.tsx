@@ -16,7 +16,6 @@ const ManageAssignments: React.FC = () => {
     title: '',
     description: '',
     total_points: 100,
-    total_points: 100,
     due_date: ''
   });
 
