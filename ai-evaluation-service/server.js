@@ -69,7 +69,7 @@ DO NOT include any markdown formatting, code blocks, or text outside of the JSON
     
     // 3. Call OpenAI
     const completion = await openai.chat.completions.create({
-      model: "gpt-4-turbo-preview", // or gpt-3.5-turbo
+      model: "gpt-3.5-turbo", // Changed from gpt-4-turbo-preview to avoid 404 errors
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt }
