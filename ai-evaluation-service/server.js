@@ -72,7 +72,7 @@ DO NOT include any markdown formatting, code blocks, or text outside of the JSON
     try {
       // 3. Call AI (Groq)
       const completion = await openai.chat.completions.create({
-        model: "llama3-8b-8192", // Changed to Groq model
+        model: "llama-3.1-8b-instant", // Changed to currently supported Groq model
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt }
