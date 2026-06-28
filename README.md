@@ -7,10 +7,8 @@ The Intelligent Student Evaluation System (ISES) is an AI-powered university stu
 ## Technology Stack
 
 - **Frontend**: React.js + TypeScript + Tailwind CSS
-- **Backend**: Laravel (PHP 8.2+) + Sanctum Auth
-- **Database**: Supabase (PostgreSQL)
+- **Backend**: Supabase (Auth + PostgreSQL + Row-Level Security)
 - **AI Services**: OpenAI GPT-4 / Anthropic Claude
-- **Cache/Queue**: Redis
 
 ## Project Structure
 
@@ -20,19 +18,14 @@ The Intelligent Student Evaluation System (ISES) is an AI-powered university stu
 │   ├── public/            # Public assets
 │   ├── src/               # Source code
 │   │   ├── components/    # Reusable UI components
+│   │   ├── contexts/      # React contexts (Auth, Theme)
 │   │   ├── hooks/         # Custom React hooks
+│   │   ├── lib/           # Supabase client configuration
 │   │   ├── pages/         # Page components
-│   │   ├── services/      # API service layers
-│   │   └── utils/         # Utility functions
-│   ├── Dockerfile         # Frontend Docker configuration
-│   └── README.md          # Frontend documentation
-├── backend/               # Laravel backend API
-│   ├── app/               # Application source code
-│   ├── database/          # Database migrations
-│   ├── routes/            # API routes
-│   ├── Dockerfile         # Backend Docker configuration
-│   └── README.md          # Backend documentation
-├── docker-compose.yml     # Docker Compose configuration
+│   │   ├── services/      # Supabase service layers
+│   │   └── index.tsx      # App entry point
+│   └── .env.example       # Environment variables template
+├── supabase-schema.sql    # Database schema for Supabase
 ├── ISES_Executive_Summary.md  # Project executive summary
 └── README.md              # This file
 ```
@@ -46,171 +39,120 @@ The Intelligent Student Evaluation System (ISES) is an AI-powered university stu
 │  - Student Dashboard  - Instructor Panel    │
 │  - Admin Portal  - Analytics Views          │
 └─────────────────┬───────────────────────────┘
-                  │ REST API (HTTPS)
+                  │ Direct Client SDK
 ┌─────────────────▼───────────────────────────┐
-│         Backend (Laravel API)               │
-│  - Authentication  - Evaluation Engine      │
-│  - Comment System  - Analytics Service      │
+│           Supabase (BaaS)                   │
+│  - Authentication (email/password)          │
+│  - PostgreSQL Database                      │
+│  - Row-Level Security (RLS)                 │
+│  - Auto-generated REST API                  │
 └─────────────────┬───────────────────────────┘
                   │
-        ┌─────────┴──────────┬────────────────┐
-        │                    │                │
-┌───────▼────────┐  ┌────────▼──────┐  ┌─────▼──────┐
-│   Supabase     │  │  OpenAI/      │  │   Redis    │
-│  (PostgreSQL)  │  │  Claude API   │  │  (Cache)   │
-└────────────────┘  └───────────────┘  └────────────┘
+         ┌────────┴──────────┐
+         │                   │
+┌────────▼────────┐  ┌───────▼───────┐
+│   PostgreSQL    │  │  OpenAI/      │
+│  (profiles,     │  │  Claude API   │
+│   courses,      │  │  (future)     │
+│   evaluations)  │  └───────────────┘
+└─────────────────┘
 ```
 
 ## Getting Started
 
 ### Prerequisites
 
-- Docker and Docker Compose
 - Node.js 14+ (for local development)
-- PHP 8.2+ (for local development)
-- Composer (for local development)
+- A Supabase account (free tier: [supabase.com](https://supabase.com))
 
-### Quick Start with Docker
+### Step 1: Set Up Supabase
 
-1. **Start all services:**
-```bash
-docker-compose up -d --build
-```
+1. Go to [supabase.com](https://supabase.com) and create a new project
+2. Wait for the project to finish provisioning
+3. Go to **SQL Editor** → **New Query**
+4. Copy the contents of `supabase-schema.sql` and run it
+5. Go to **Settings → API** and copy your:
+   - **Project URL** (e.g., `https://xxxxx.supabase.co`)
+   - **anon / public key** (the `eyJ...` string)
 
-2. **Access the applications:**
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8000
+### Step 2: Configure Frontend
 
-3. **View logs:**
-```bash
-docker-compose logs -f
-```
+1. Navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
 
-4. **Stop all services:**
-```bash
-docker-compose down
-```
+2. Copy the environment template:
+   ```bash
+   cp .env.example .env
+   ```
 
-### Frontend Setup (Local Development)
+3. Edit `.env` and add your Supabase credentials:
+   ```
+   REACT_APP_SUPABASE_URL=https://your-project-id.supabase.co
+   REACT_APP_SUPABASE_ANON_KEY=your-anon-key-here
+   ```
 
-1. **Navigate to the frontend directory:**
-```bash
-cd frontend
-```
+4. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-2. **Install dependencies:**
-```bash
-npm install
-```
-
-3. **Start the development server:**
-```bash
-npm start
-```
+5. Start the development server:
+   ```bash
+   npm start
+   ```
 
 The frontend will be available at `http://localhost:3000`.
 
-### Backend Setup (Local Development)
-
-1. **Navigate to the backend directory:**
-```bash
-cd backend
-```
-
-2. **Install PHP dependencies:**
-```bash
-composer install
-```
-
-3. **Configure environment variables:**
-Create a `.env` file based on `.env.example`:
-```bash
-cp .env.example .env
-```
-
-4. **Generate application key:**
-```bash
-php artisan key:generate
-```
-
-5. **Start the development server:**
-```bash
-php artisan serve
-```
-
-The backend API will be available at `http://localhost:8000`.
-
-## Core Features Implementation
+## Core Features
 
 ### 1. Authentication System
+- Supabase Auth with email/password
+- Role-based access control (student, instructor, admin)
+- Automatic profile creation on signup via database trigger
+- Protected routes with role-based redirects
 
-#### Frontend Implementation
-- Custom React hook for authentication state management
-- Protected routes with role-based access control
-- Login/signup forms with validation
+### 2. Course Management
+- Instructors can create and manage courses
+- Students can view enrolled courses
+- Admin can view all courses
 
-#### Backend Implementation
-- Laravel Sanctum for API token authentication
-- Role-based access control middleware
-- User registration and login endpoints
+### 3. Enrollment System
+- Instructors can enroll students in their courses
+- Duplicate enrollment prevention
+- Enrollment status tracking (active, completed, dropped)
 
-### 2. Landing Page
+### 4. Evaluation System
+- Instructors create evaluations with scores and feedback
+- Automatic grade calculation (A to F)
+- Detailed feedback with strengths and areas for improvement
+- Performance summary by type and by course
 
-#### Frontend Implementation
-- Responsive design with Tailwind CSS
-- Navigation component with routing
-- Hero section, features grid, and testimonials
-- FAQ section and call-to-action footer
-
-### 3. Login & Signup Pages
-
-#### Frontend Implementation
-- Multi-step signup form for different user roles
-- Form validation with user-friendly error messages
-- Password strength indicator
-- "Remember me" functionality
-
-### 4. Dashboard Views
-
-#### Frontend Implementation
+### 5. Dashboard Views
 - Role-specific dashboards (student, instructor, admin)
-- Data visualization components
-- Submission management interface
-- Analytics display components
+- Student: view evaluations, grades, and feedback
+- Instructor: manage courses, students, and evaluations
+- Admin: system overview
 
-### 5. Admin Comment System
+## Database Tables
 
-#### Frontend Implementation
-- Comment management interface
-- Priority and privacy settings
-- Comment type categorization
+| Table | Description |
+|---|---|
+| `profiles` | User profiles (extends Supabase auth.users) |
+| `courses` | Courses with instructor assignment |
+| `enrollments` | Student-course enrollment records |
+| `evaluations` | Evaluation scores, grades, and feedback |
 
-#### Backend Implementation
-- Dedicated comments table in database
-- API endpoints for comment management
-- Role-based access control for comments
+## Frontend Services
 
-## API Endpoints
-
-### Authentication
-- `POST /api/auth/register` - User registration
-- `POST /api/auth/login` - User login
-- `POST /api/auth/logout` - User logout
-- `GET /api/auth/me` - Get current user
-
-## Development Workflow
-
-1. **Frontend Development**
-   - Create components in `frontend/src/components/`
-   - Implement pages in `frontend/src/pages/`
-   - Add services in `frontend/src/services/`
-   - Update routes in `frontend/src/App.tsx`
-
-2. **Backend Development**
-   - Create models in `backend/app/Models/`
-   - Implement controllers in `backend/app/Http/Controllers/`
-   - Add routes in `backend/routes/api.php`
-   - Create migrations in `backend/database/migrations/`
+| Service | Description |
+|---|---|
+| `authService.ts` | Login, register, logout, get current user |
+| `courseService.ts` | CRUD operations for courses |
+| `enrollmentService.ts` | Student enrollment management |
+| `evaluationService.ts` | Evaluation CRUD with grade calculation |
+| `userService.ts` | Student queries with statistics |
 
 ## Support
 

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-
-const API_URL = process.env.REACT_APP_API_URL;
+import { useAuthContext } from '../../contexts/AuthContext';
+import { courseService } from '../../services/courseService';
+import { enrollmentService } from '../../services/enrollmentService';
+import { userService } from '../../services/userService';
 
 interface Course {
   id: number;
@@ -31,6 +32,7 @@ interface Enrollment {
 
 const ManageStudents: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuthContext();
   const [courses, setCourses] = useState<Course[]>([]);
   const [selectedCourse, setSelectedCourse] = useState('');
   const [enrolledStudents, setEnrolledStudents] = useState<Enrollment[]>([]);
@@ -57,11 +59,9 @@ const ManageStudents: React.FC = () => {
 
   const fetchCourses = async () => {
     try {
-      const token = localStorage.getItem('auth_token');
-      const response = await axios.get(`${API_URL}/courses`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setCourses(response.data.courses);
+      if (!user) return;
+      const response = await courseService.getCourses(user.id, user.role);
+      setCourses(response.courses);
     } catch (err) {
       console.error('Error fetching courses:', err);
     }
@@ -69,11 +69,8 @@ const ManageStudents: React.FC = () => {
 
   const fetchEnrolledStudents = async () => {
     try {
-      const token = localStorage.getItem('auth_token');
-      const response = await axios.get(`${API_URL}/courses/${selectedCourse}/enrollments`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setEnrolledStudents(response.data.enrollments);
+      const response = await enrollmentService.getCourseEnrollments(Number(selectedCourse));
+      setEnrolledStudents(response.enrollments);
     } catch (err) {
       console.error('Error fetching enrolled students:', err);
     }
@@ -81,11 +78,8 @@ const ManageStudents: React.FC = () => {
 
   const fetchAvailableStudents = async () => {
     try {
-      const token = localStorage.getItem('auth_token');
-      const response = await axios.get(`${API_URL}/courses/${selectedCourse}/available-students`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setAvailableStudents(response.data.students);
+      const response = await courseService.getAvailableStudents(Number(selectedCourse));
+      setAvailableStudents(response.students);
     } catch (err) {
       console.error('Error fetching available students:', err);
     }
@@ -93,11 +87,8 @@ const ManageStudents: React.FC = () => {
 
   const fetchStudentsWithEvaluations = async () => {
     try {
-      const token = localStorage.getItem('auth_token');
-      const response = await axios.get(`${API_URL}/courses/${selectedCourse}/students/evaluations`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setStudentsWithEvaluations(response.data.students);
+      const response = await userService.getCourseStudentsWithEvaluations(Number(selectedCourse));
+      setStudentsWithEvaluations(response.students);
     } catch (err) {
       console.error('Error fetching students with evaluations:', err);
     }
@@ -117,13 +108,7 @@ const ManageStudents: React.FC = () => {
     setError('');
 
     try {
-      const token = localStorage.getItem('auth_token');
-      await axios.post(`${API_URL}/enrollments`, {
-        course_id: selectedCourse,
-        student_id: selectedStudent
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await enrollmentService.enrollStudent(Number(selectedCourse), selectedStudent);
 
       setSuccess('Student added successfully!');
       setShowAddModal(false);
@@ -133,7 +118,7 @@ const ManageStudents: React.FC = () => {
 
       setTimeout(() => setSuccess(''), 3000);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to add student');
+      setError(err.message || 'Failed to add student');
     } finally {
       setLoading(false);
     }
@@ -145,10 +130,7 @@ const ManageStudents: React.FC = () => {
     }
 
     try {
-      const token = localStorage.getItem('auth_token');
-      await axios.delete(`${API_URL}/enrollments/${enrollmentId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await enrollmentService.removeEnrollment(enrollmentId);
 
       setSuccess('Student removed successfully!');
       fetchEnrolledStudents();
@@ -156,7 +138,7 @@ const ManageStudents: React.FC = () => {
 
       setTimeout(() => setSuccess(''), 3000);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to remove student');
+      setError(err.message || 'Failed to remove student');
     }
   };
 

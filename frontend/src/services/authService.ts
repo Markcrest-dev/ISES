@@ -1,17 +1,15 @@
-import api from './api';
+import { supabase } from '../lib/supabase';
 
-interface LoginResponse {
-  user: {
-    id: string;
-    full_name: string;
-    email: string;
-    role: string;
-    student_id?: string;
-    program?: string;
-    year_of_study?: number;
-  };
-  token: string;
-  message: string;
+export interface Profile {
+  id: string;
+  full_name: string;
+  email: string;
+  role: string;
+  student_id?: string;
+  program?: string;
+  year_of_study?: number;
+  created_at?: string;
+  updated_at?: string;
 }
 
 interface RegisterData {
@@ -24,89 +22,126 @@ interface RegisterData {
   password: string;
 }
 
-interface RegisterResponse {
-  user: {
-    id: string;
-    full_name: string;
-    email: string;
-    role: string;
-    student_id?: string;
-    program?: string;
-    year_of_study?: number;
-  };
-  token: string;
-  message: string;
-}
-
-interface LogoutResponse {
-  message: string;
-}
-
-interface MeResponse {
-  user: {
-    id: string;
-    full_name: string;
-    email: string;
-    role: string;
-    student_id?: string;
-    program?: string;
-    year_of_study?: number;
-  };
-}
-
 export const authService = {
   // Login user
-  login: async (email: string, password: string): Promise<LoginResponse> => {
-    try {
-      const response = await api.post<LoginResponse>('/auth/login', { email, password });
-      return response.data;
-    } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'Login failed');
+  login: async (email: string, password: string) => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      throw new Error(error.message);
     }
+
+    // Fetch user profile
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', data.user.id)
+      .single();
+
+    if (profileError) {
+      throw new Error('Failed to fetch user profile');
+    }
+
+    return {
+      user: profile as Profile,
+      token: data.session.access_token,
+      message: 'Login successful',
+    };
   },
 
   // Register user
-  register: async (data: RegisterData): Promise<RegisterResponse> => {
-    try {
-      const response = await api.post<RegisterResponse>('/auth/register', data);
-      return response.data;
-    } catch (error: any) {
-      // Extract detailed error information
-      const errorMessage = error.response?.data?.message || 'Registration failed';
-      const errorDetails = error.response?.data?.errors || error.response?.data?.details;
+  register: async (registerData: RegisterData) => {
+    const { data, error } = await supabase.auth.signUp({
+      email: registerData.email,
+      password: registerData.password,
+      options: {
+        data: {
+          full_name: registerData.full_name,
+          role: registerData.role,
+        },
+      },
+    });
 
-      // If there are detailed validation errors, format them nicely
-      if (errorDetails) {
-        const errorMessages = Object.entries(errorDetails)
-          .map(([field, messages]: [string, any]) => {
-            const messageArray = Array.isArray(messages) ? messages : [messages];
-            return `${field}: ${messageArray.join(', ')}`;
-          })
-          .join('; ');
-        throw new Error(`${errorMessage} - ${errorMessages}`);
-      }
-
-      throw new Error(errorMessage);
+    if (error) {
+      throw new Error(error.message);
     }
+
+    if (!data.user) {
+      throw new Error('Registration failed — no user returned');
+    }
+
+    // Wait briefly for the trigger to create the profile, then update it
+    // with student-specific fields if needed
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    const updateFields: Record<string, any> = {
+      full_name: registerData.full_name,
+      role: registerData.role,
+    };
+
+    if (registerData.role === 'student') {
+      updateFields.student_id = registerData.student_id || null;
+      updateFields.program = registerData.program || null;
+      updateFields.year_of_study = registerData.year_of_study || null;
+    }
+
+    const { error: updateError } = await supabase
+      .from('profiles')
+      .update(updateFields)
+      .eq('id', data.user.id);
+
+    if (updateError) {
+      console.error('Failed to update profile with additional data:', updateError);
+    }
+
+    // Fetch the full profile
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', data.user.id)
+      .single();
+
+    return {
+      user: (profile || {
+        id: data.user.id,
+        full_name: registerData.full_name,
+        email: registerData.email,
+        role: registerData.role,
+      }) as Profile,
+      token: data.session?.access_token || '',
+      message: 'User registered successfully',
+    };
   },
 
   // Logout user
   logout: async (): Promise<void> => {
-    try {
-      await api.post<LogoutResponse>('/auth/logout');
-    } catch (error: any) {
-      // Even if logout fails on the server, we still want to clear local data
-      console.error('Logout API call failed:', error);
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error('Logout failed:', error);
     }
   },
 
-  // Get current user
-  getCurrentUser: async (): Promise<any> => {
-    try {
-      const response = await api.get<MeResponse>('/auth/me');
-      return response.data.user;
-    } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'Failed to get user data');
+  // Get current user profile
+  getCurrentUser: async (): Promise<Profile | null> => {
+    const { data: { user }, error } = await supabase.auth.getUser();
+
+    if (error || !user) {
+      return null;
     }
-  }
+
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .single();
+
+    if (profileError) {
+      throw new Error('Failed to fetch user profile');
+    }
+
+    return profile as Profile;
+  },
 };

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-
-const API_URL = process.env.REACT_APP_API_URL;
+import { useAuthContext } from '../../contexts/AuthContext';
+import { evaluationService } from '../../services/evaluationService';
 
 interface Evaluation {
   id: number;
@@ -28,6 +27,7 @@ interface Evaluation {
 
 const MyEvaluations: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuthContext();
   const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedEvaluation, setSelectedEvaluation] = useState<Evaluation | null>(null);
@@ -38,11 +38,9 @@ const MyEvaluations: React.FC = () => {
 
   const fetchEvaluations = async () => {
     try {
-      const token = localStorage.getItem('auth_token');
-      const response = await axios.get(`${API_URL}/evaluations/student`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setEvaluations(response.data.evaluations);
+      if (!user) return;
+      const response = await evaluationService.getStudentEvaluations(user.id);
+      setEvaluations(response.evaluations);
     } catch (err) {
       console.error('Error fetching evaluations:', err);
     } finally {

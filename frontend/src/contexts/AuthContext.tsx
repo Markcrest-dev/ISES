@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { authService } from '../services/authService';
+import { supabase } from '../lib/supabase';
+import { authService, Profile } from '../services/authService';
 
 export interface User {
   id: string;
@@ -15,6 +16,15 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<{ user: User; token: string }>;
+  register: (data: {
+    full_name: string;
+    email: string;
+    role: string;
+    student_id?: string;
+    program?: string;
+    year_of_study?: number;
+    password: string;
+  }) => Promise<{ user: User; token: string }>;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
 }
@@ -26,43 +36,71 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in on mount
+    // Check initial session
     const initializeAuth = async () => {
-      const token = localStorage.getItem('auth_token');
-      if (token) {
-        try {
-          const userData = await authService.getCurrentUser();
-          setUser(userData);
-        } catch (error) {
-          // If token is invalid, remove it
-          localStorage.removeItem('auth_token');
-          setUser(null);
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          const profile = await authService.getCurrentUser();
+          if (profile) {
+            setUser(profile as User);
+          }
         }
+      } catch (error) {
+        console.error('Auth initialization error:', error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     initializeAuth();
+
+    // Listen for auth state changes (login, logout, token refresh)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === 'SIGNED_IN' && session?.user) {
+          try {
+            const profile = await authService.getCurrentUser();
+            if (profile) {
+              setUser(profile as User);
+            }
+          } catch (error) {
+            console.error('Error fetching profile on auth change:', error);
+          }
+        } else if (event === 'SIGNED_OUT') {
+          setUser(null);
+        }
+      }
+    );
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const login = async (email: string, password: string) => {
-    try {
-      const response = await authService.login(email, password);
-      localStorage.setItem('auth_token', response.token);
-      setUser(response.user);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    const response = await authService.login(email, password);
+    setUser(response.user as User);
+    return response;
+  };
+
+  const register = async (data: {
+    full_name: string;
+    email: string;
+    role: string;
+    student_id?: string;
+    program?: string;
+    year_of_study?: number;
+    password: string;
+  }) => {
+    const response = await authService.register(data);
+    setUser(response.user as User);
+    return response;
   };
 
   const logout = async () => {
-    try {
-      await authService.logout();
-    } finally {
-      localStorage.removeItem('auth_token');
-      setUser(null);
-    }
+    await authService.logout();
+    setUser(null);
   };
 
   return (
@@ -71,6 +109,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         user,
         loading,
         login,
+        register,
         logout,
         isAuthenticated: !!user,
       }}

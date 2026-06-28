@@ -139,9 +139,6 @@ const Signup: React.FC = () => {
       // Register the user
       const response = await authService.register(registrationData);
       
-      // Store the token and user data
-      localStorage.setItem('auth_token', response.token);
-      
       // Redirect based on user role
       if (formData.role === 'student') {
         navigate('/student/dashboard');

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import api from '../services/api';
+import { supabase } from '../lib/supabase';
 
 const ApiTest: React.FC = () => {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
@@ -8,13 +8,20 @@ const ApiTest: React.FC = () => {
   useEffect(() => {
     const testConnection = async () => {
       try {
-        const response = await api.get('/test');
-        setStatus('success');
-        setMessage(response.data.message);
+        // Test Supabase connection by querying the profiles table
+        const { data, error } = await supabase.from('profiles').select('id').limit(1);
+
+        if (error) {
+          setStatus('error');
+          setMessage(`Supabase error: ${error.message}`);
+        } else {
+          setStatus('success');
+          setMessage('Successfully connected to Supabase!');
+        }
       } catch (error) {
         setStatus('error');
-        setMessage('Failed to connect to the backend');
-        console.error('API Error:', error);
+        setMessage('Failed to connect to Supabase');
+        console.error('Supabase Error:', error);
       }
     };
 
@@ -23,7 +30,7 @@ const ApiTest: React.FC = () => {
 
   return (
     <div>
-      <h2>API Connection Test</h2>
+      <h2>Supabase Connection Test</h2>
       <p>Status: {status}</p>
       <p>Message: {message}</p>
     </div>

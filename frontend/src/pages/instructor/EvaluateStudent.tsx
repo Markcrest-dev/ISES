@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import axios from 'axios';
-
-const API_URL = process.env.REACT_APP_API_URL;
+import { useAuthContext } from '../../contexts/AuthContext';
+import { courseService } from '../../services/courseService';
+import { enrollmentService } from '../../services/enrollmentService';
+import { evaluationService } from '../../services/evaluationService';
 
 interface Course {
   id: number;
@@ -21,6 +22,7 @@ interface Student {
 const EvaluateStudent: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { user } = useAuthContext();
   const [courses, setCourses] = useState<Course[]>([]);
   const [students, setStudents] = useState<Student[]>([]);
   const [selectedCourse, setSelectedCourse] = useState('');
@@ -71,11 +73,9 @@ const EvaluateStudent: React.FC = () => {
   const fetchCourses = async () => {
     try {
       setLoadingCourses(true);
-      const token = localStorage.getItem('auth_token');
-      const response = await axios.get(`${API_URL}/courses`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setCourses(response.data.courses);
+      if (!user) return;
+      const response = await courseService.getCourses(user.id, user.role);
+      setCourses(response.courses);
       setError('');
     } catch (err) {
       console.error('Error fetching courses:', err);
@@ -89,11 +89,8 @@ const EvaluateStudent: React.FC = () => {
     try {
       setLoadingStudents(true);
       setStudents([]);
-      const token = localStorage.getItem('auth_token');
-      const response = await axios.get(`${API_URL}/courses/${courseId}/enrollments`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const enrolledStudents = response.data.enrollments.map((enrollment: any) => enrollment.student);
+      const response = await enrollmentService.getCourseEnrollments(Number(courseId));
+      const enrolledStudents = response.enrollments.map((enrollment: any) => enrollment.student);
       setStudents(enrolledStudents);
 
       // Clear student selection if previously selected student is not in this course
@@ -128,13 +125,24 @@ const EvaluateStudent: React.FC = () => {
     }
 
     try {
-      const token = localStorage.getItem('auth_token');
-      await axios.post(`${API_URL}/evaluations`, {
-        course_id: selectedCourse,
-        ...formData
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      if (!user) {
+        setError('You must be logged in');
+        setLoading(false);
+        return;
+      }
+      await evaluationService.createEvaluation({
+        course_id: Number(selectedCourse),
+        student_id: formData.student_id,
+        evaluation_type: formData.evaluation_type,
+        title: formData.title,
+        description: formData.description || undefined,
+        score: Number(formData.score),
+        max_score: Number(formData.max_score),
+        feedback: formData.feedback || undefined,
+        strengths: formData.strengths || undefined,
+        areas_for_improvement: formData.areas_for_improvement || undefined,
+        evaluation_date: formData.evaluation_date,
+      }, user.id);
 
       setSuccess('Evaluation submitted successfully!');
 
@@ -156,7 +164,7 @@ const EvaluateStudent: React.FC = () => {
         navigate('/instructor/dashboard');
       }, 2000);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to submit evaluation');
+      setError(err.message || 'Failed to submit evaluation');
     } finally {
       setLoading(false);
     }
