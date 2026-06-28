@@ -31,6 +31,12 @@ export const authService = {
     });
 
     if (error) {
+      console.error('Supabase login error:', {
+        message: error.message,
+        status: error.status,
+        name: error.name,
+        code: (error as any).code,
+      });
       throw new Error(error.message);
     }
 
@@ -66,6 +72,12 @@ export const authService = {
     });
 
     if (error) {
+      console.error('Supabase signup error:', {
+        message: error.message,
+        status: error.status,
+        name: error.name,
+        code: (error as any).code,
+      });
       throw new Error(error.message);
     }
 
