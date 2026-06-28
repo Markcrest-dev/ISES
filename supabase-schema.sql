@@ -66,6 +66,48 @@ CREATE TABLE IF NOT EXISTS evaluations (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- 4.5 ASSIGNMENTS TABLE
+-- ==============================================
+CREATE TABLE IF NOT EXISTS assignments (
+  id BIGSERIAL PRIMARY KEY,
+  course_id BIGINT REFERENCES courses(id) ON DELETE CASCADE NOT NULL,
+  instructor_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
+  title TEXT NOT NULL,
+  description TEXT,
+  total_points DECIMAL(5,2) DEFAULT 100,
+  due_date TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 4.6 SUBMISSIONS TABLE
+-- ==============================================
+CREATE TABLE IF NOT EXISTS submissions (
+  id BIGSERIAL PRIMARY KEY,
+  assignment_id BIGINT REFERENCES assignments(id) ON DELETE CASCADE NOT NULL,
+  student_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
+  submission_content TEXT,
+  status TEXT DEFAULT 'submitted' CHECK (status IN ('draft', 'submitted', 'graded')),
+  submitted_at TIMESTAMPTZ DEFAULT NOW(),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(assignment_id, student_id)
+);
+
+-- 4.7 ADMIN COMMENTS TABLE
+-- ==============================================
+CREATE TABLE IF NOT EXISTS admin_comments (
+  id BIGSERIAL PRIMARY KEY,
+  student_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
+  author_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
+  comment TEXT NOT NULL,
+  comment_type TEXT DEFAULT 'general' CHECK (comment_type IN ('general', 'academic', 'behavioral', 'intervention', 'praise')),
+  is_private BOOLEAN DEFAULT true,
+  priority TEXT DEFAULT 'medium' CHECK (priority IN ('low', 'medium', 'high', 'critical')),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- 5. AUTO-CREATE PROFILE ON SIGNUP (trigger)
 -- ==============================================
 CREATE OR REPLACE FUNCTION public.handle_new_user()
@@ -96,6 +138,9 @@ ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE courses ENABLE ROW LEVEL SECURITY;
 ALTER TABLE enrollments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE evaluations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE assignments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE submissions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE admin_comments ENABLE ROW LEVEL SECURITY;
 
 -- Profiles Policies
 CREATE POLICY "Anyone can read profiles"
@@ -136,6 +181,52 @@ CREATE POLICY "Instructors can update evaluations"
 
 CREATE POLICY "Instructors can delete evaluations"
   ON evaluations FOR DELETE USING (auth.uid() = instructor_id);
+
+-- Assignments Policies
+CREATE POLICY "Anyone can read assignments"
+  ON assignments FOR SELECT USING (true);
+
+CREATE POLICY "Instructors can create assignments"
+  ON assignments FOR INSERT WITH CHECK (auth.uid() = instructor_id);
+
+CREATE POLICY "Instructors can update assignments"
+  ON assignments FOR UPDATE USING (auth.uid() = instructor_id);
+
+CREATE POLICY "Instructors can delete assignments"
+  ON assignments FOR DELETE USING (auth.uid() = instructor_id);
+
+-- Submissions Policies
+CREATE POLICY "Instructors can read all submissions"
+  ON submissions FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM assignments WHERE assignments.id = submissions.assignment_id AND assignments.instructor_id = auth.uid()
+    )
+  );
+
+CREATE POLICY "Students can read own submissions"
+  ON submissions FOR SELECT USING (auth.uid() = student_id);
+
+CREATE POLICY "Students can create submissions"
+  ON submissions FOR INSERT WITH CHECK (auth.uid() = student_id);
+
+CREATE POLICY "Students can update own submissions"
+  ON submissions FOR UPDATE USING (auth.uid() = student_id);
+
+-- Admin Comments Policies
+CREATE POLICY "Admins and instructors can read private comments"
+  ON admin_comments FOR SELECT USING (
+    is_private = false OR 
+    (is_private = true AND EXISTS (SELECT 1 FROM profiles WHERE profiles.id = auth.uid() AND role IN ('admin', 'instructor')))
+  );
+
+CREATE POLICY "Admins and instructors can create comments"
+  ON admin_comments FOR INSERT WITH CHECK (auth.uid() = author_id AND EXISTS (SELECT 1 FROM profiles WHERE profiles.id = auth.uid() AND role IN ('admin', 'instructor')));
+
+CREATE POLICY "Authors can update own comments"
+  ON admin_comments FOR UPDATE USING (auth.uid() = author_id);
+
+CREATE POLICY "Authors can delete own comments"
+  ON admin_comments FOR DELETE USING (auth.uid() = author_id);
 
 -- ============================================================
 -- DONE! Your database is ready.

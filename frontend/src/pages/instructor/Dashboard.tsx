@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../../contexts/AuthContext';
+import { courseService, Course } from '../../services/courseService';
 
 const InstructorDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('courses');
+  const [courses, setCourses] = useState<Course[]>([]);
   const { user, logout } = useAuthContext();
   const navigate = useNavigate();
 
@@ -16,20 +18,28 @@ const InstructorDashboard: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchCourses = async () => {
+      if (user) {
+        try {
+          const res = await courseService.getCourses(user.id, 'instructor');
+          setCourses(res.courses || []);
+        } catch (error) {
+          console.error("Failed to fetch courses:", error);
+        }
+      }
+    };
+    fetchCourses();
+  }, [user]);
+
   // Mock data for instructor
   const instructorData = {
     name: user?.full_name || "Dr. Jane Smith",
     department: "Computer Science",
     email: user?.email || "jane.smith@university.edu",
-    courses: 3,
-    students: 85
+    courses: courses.length,
+    students: courses.reduce((acc, c) => acc + (c.students?.length || 0), 0)
   };
-
-  const courses = [
-    { id: 1, code: "CS101", name: "Introduction to Programming", students: 30, assignments: 5 },
-    { id: 2, code: "CS201", name: "Data Structures", students: 25, assignments: 4 },
-    { id: 3, code: "CS301", name: "Algorithms", students: 30, assignments: 3 }
-  ];
 
   const recentSubmissions = [
     { id: 1, student: "John Doe", course: "CS101", assignment: "Loops and Conditions", submitted: "2024-02-10", status: "Pending Evaluation" },
@@ -46,6 +56,18 @@ const InstructorDashboard: React.FC = () => {
           <h1 className="text-2xl font-bold text-gray-900">Instructor Dashboard</h1>
           <div className="flex items-center space-x-3">
             <span className="mr-4 text-sm text-gray-700">Welcome, {instructorData.name}</span>
+            <button
+              onClick={() => navigate('/instructor/course/create')}
+              className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700"
+            >
+              Create Course
+            </button>
+            <button
+              onClick={() => navigate('/instructor/assignments')}
+              className="bg-purple-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-purple-700"
+            >
+              Manage Assignments
+            </button>
             <button
               onClick={() => navigate('/instructor/manage-students')}
               className="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700"
@@ -213,14 +235,14 @@ const InstructorDashboard: React.FC = () => {
                   {courses.map((course) => (
                     <tr key={course.id}>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{course.code}</div>
-                        <div className="text-sm text-gray-500">{course.name}</div>
+                        <div className="text-sm font-medium text-gray-900">{course.course_code}</div>
+                        <div className="text-sm text-gray-500">{course.course_name}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {course.students}
+                        {course.students?.length || 0}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {course.assignments}
+                        0
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <button type="button" className="text-indigo-600 hover:text-indigo-900">View Details</button>

@@ -7,8 +7,10 @@ import AdminDashboard from './pages/admin/Dashboard';
 import Login from './pages/auth/Login';
 import Signup from './pages/auth/Signup';
 import InstructorDashboard from './pages/instructor/Dashboard';
+import CreateCourse from './pages/instructor/CreateCourse';
 import EvaluateStudent from './pages/instructor/EvaluateStudent';
 import ManageStudents from './pages/instructor/ManageStudents';
+import ManageAssignments from './pages/instructor/ManageAssignments';
 import AboutPage from './pages/public/AboutPage';
 import ContactPage from './pages/public/ContactPage';
 import FeaturesPage from './pages/public/FeaturesPage';
@@ -17,6 +19,7 @@ import PrivacyPolicy from './pages/public/PrivacyPolicy';
 import TermsOfService from './pages/public/TermsOfService';
 import StudentDashboard from './pages/student/Dashboard';
 import MyEvaluations from './pages/student/MyEvaluations';
+import StudentAssignments from './pages/student/StudentAssignments';
 
 function App() {
   return (
@@ -53,6 +56,14 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/student/assignments"
+              element={
+                <ProtectedRoute allowedRoles={['student']}>
+                  <StudentAssignments />
+                </ProtectedRoute>
+              }
+            />
 
             {/* Instructor routes */}
             <Route
@@ -76,6 +87,22 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={['instructor']}>
                   <ManageStudents />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/instructor/course/create"
+              element={
+                <ProtectedRoute allowedRoles={['instructor']}>
+                  <CreateCourse />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/instructor/assignments"
+              element={
+                <ProtectedRoute allowedRoles={['instructor']}>
+                  <ManageAssignments />
                 </ProtectedRoute>
               }
             />

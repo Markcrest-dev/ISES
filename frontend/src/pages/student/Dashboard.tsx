@@ -47,6 +47,12 @@ const StudentDashboard: React.FC = () => {
           <div className="flex items-center space-x-3">
             <span className="mr-4 text-sm text-gray-700">Welcome, {studentData.name}</span>
             <button
+              onClick={() => navigate('/student/assignments')}
+              className="bg-purple-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-purple-700"
+            >
+              My Assignments
+            </button>
+            <button
               onClick={() => navigate('/student/evaluations')}
               className="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700"
             >
