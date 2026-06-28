@@ -1,0 +1,9 @@
+Instructor | Dr. Instructor 1 | instructor1@ises.edu | password123
+Instructor | Dr. Instructor 2 | instructor2@ises.edu | password123
+Instructor | Dr. Instructor 3 | instructor3@ises.edu | password123
+Instructor | Dr. Instructor 4 | instructor4@ises.edu | password123
+Instructor | Dr. Instructor 5 | instructor5@ises.edu | password123
+Student | Student 1 Name | student1@ises.edu | password123
+Student | Student 2 Name | student2@ises.edu | password123
+Student | Student 3 Name | student3@ises.edu | password123
+Student | Student 4 Name | student4@ises.edu | password123
