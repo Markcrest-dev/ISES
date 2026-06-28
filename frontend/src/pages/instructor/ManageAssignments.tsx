@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useAuthContext } from '../../contexts/AuthContext';
 import { assignmentService, Assignment } from '../../services/assignmentService';
 import { courseService, Course } from '../../services/courseService';
+import { aiService } from '../../services/aiService';
+import { submissionService, Submission } from '../../services/submissionService';
 
 const ManageAssignments: React.FC = () => {
   const { user } = useAuthContext();
@@ -14,8 +16,40 @@ const ManageAssignments: React.FC = () => {
     title: '',
     description: '',
     total_points: 100,
+    total_points: 100,
     due_date: ''
   });
+
+  const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null);
+  const [assignmentSubmissions, setAssignmentSubmissions] = useState<Submission[]>([]);
+  const [evaluatingId, setEvaluatingId] = useState<number | null>(null);
+
+  const viewSubmissions = async (assignment: Assignment) => {
+    setSelectedAssignment(assignment);
+    try {
+      const subs = await submissionService.getSubmissionsByAssignment(assignment.id);
+      setAssignmentSubmissions(subs);
+    } catch (error) {
+      console.error("Failed to load submissions", error);
+    }
+  };
+
+  const handleEvaluate = async (submissionId: number) => {
+    setEvaluatingId(submissionId);
+    try {
+      await aiService.triggerEvaluation(submissionId);
+      // Reload submissions
+      if (selectedAssignment) {
+        const subs = await submissionService.getSubmissionsByAssignment(selectedAssignment.id);
+        setAssignmentSubmissions(subs);
+      }
+    } catch (error) {
+      console.error("Evaluation failed", error);
+      alert("Evaluation failed. See console for details.");
+    } finally {
+      setEvaluatingId(null);
+    }
+  };
 
   useEffect(() => {
     if (user) {
@@ -177,6 +211,7 @@ const ManageAssignments: React.FC = () => {
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Due Date</th>
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Points</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
@@ -194,6 +229,11 @@ const ManageAssignments: React.FC = () => {
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                               {assignment.total_points}
                             </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                              <button onClick={() => viewSubmissions(assignment)} className="text-indigo-600 hover:text-indigo-900">
+                                View Submissions
+                              </button>
+                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -204,6 +244,68 @@ const ManageAssignments: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* Submissions Modal */}
+        {selectedAssignment && (
+          <div className="fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+              <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={() => setSelectedAssignment(null)}></div>
+              <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+              <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full sm:p-6">
+                <div className="sm:flex sm:items-start">
+                  <div className="mt-3 text-center sm:mt-0 sm:text-left w-full">
+                    <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                      Submissions for: {selectedAssignment.title}
+                    </h3>
+                    <div className="mt-4">
+                      {assignmentSubmissions.length === 0 ? (
+                        <p className="text-sm text-gray-500">No submissions yet.</p>
+                      ) : (
+                        <ul className="divide-y divide-gray-200">
+                          {assignmentSubmissions.map((sub) => (
+                            <li key={sub.id} className="py-4">
+                              <div className="flex justify-between items-start">
+                                <div>
+                                  <p className="text-sm font-medium text-gray-900">{sub.student?.full_name}</p>
+                                  <p className="text-sm text-gray-500">Submitted at: {new Date(sub.submitted_at).toLocaleString()}</p>
+                                  <p className="text-sm text-gray-500 mt-2 p-3 bg-gray-50 rounded border break-words whitespace-pre-wrap">{sub.submission_content}</p>
+                                </div>
+                                <div className="ml-4 flex-shrink-0">
+                                  {sub.status === 'graded' ? (
+                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                      Graded
+                                    </span>
+                                  ) : (
+                                    <button
+                                      onClick={() => handleEvaluate(sub.id)}
+                                      disabled={evaluatingId === sub.id}
+                                      className="inline-flex items-center px-3 py-1 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+                                    >
+                                      {evaluatingId === sub.id ? 'Grading...' : 'Grade with AI'}
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedAssignment(null)}
+                    className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
       </div>
     </div>
