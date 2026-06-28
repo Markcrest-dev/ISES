@@ -143,59 +143,76 @@ ALTER TABLE submissions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE admin_comments ENABLE ROW LEVEL SECURITY;
 
 -- Profiles Policies
+DROP POLICY IF EXISTS "Anyone can read profiles" ON profiles;
 CREATE POLICY "Anyone can read profiles"
   ON profiles FOR SELECT USING (true);
 
+DROP POLICY IF EXISTS "Users can update own profile" ON profiles;
 CREATE POLICY "Users can update own profile"
   ON profiles FOR UPDATE USING (auth.uid() = id);
 
 -- Courses Policies
+DROP POLICY IF EXISTS "Anyone can read courses" ON courses;
 CREATE POLICY "Anyone can read courses"
   ON courses FOR SELECT USING (true);
 
+DROP POLICY IF EXISTS "Instructors can create courses" ON courses;
 CREATE POLICY "Instructors can create courses"
   ON courses FOR INSERT WITH CHECK (auth.uid() = instructor_id);
 
+DROP POLICY IF EXISTS "Instructors can update own courses" ON courses;
 CREATE POLICY "Instructors can update own courses"
   ON courses FOR UPDATE USING (auth.uid() = instructor_id);
 
 -- Enrollments Policies
+DROP POLICY IF EXISTS "Anyone can read enrollments" ON enrollments;
 CREATE POLICY "Anyone can read enrollments"
   ON enrollments FOR SELECT USING (true);
 
+DROP POLICY IF EXISTS "Authenticated can create enrollments" ON enrollments;
 CREATE POLICY "Authenticated can create enrollments"
   ON enrollments FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "Authenticated can delete enrollments" ON enrollments;
 CREATE POLICY "Authenticated can delete enrollments"
   ON enrollments FOR DELETE USING (auth.uid() IS NOT NULL);
 
 -- Evaluations Policies
+DROP POLICY IF EXISTS "Anyone can read evaluations" ON evaluations;
 CREATE POLICY "Anyone can read evaluations"
   ON evaluations FOR SELECT USING (true);
 
+DROP POLICY IF EXISTS "Instructors can create evaluations" ON evaluations;
 CREATE POLICY "Instructors can create evaluations"
   ON evaluations FOR INSERT WITH CHECK (auth.uid() = instructor_id);
 
+DROP POLICY IF EXISTS "Instructors can update evaluations" ON evaluations;
 CREATE POLICY "Instructors can update evaluations"
   ON evaluations FOR UPDATE USING (auth.uid() = instructor_id);
 
+DROP POLICY IF EXISTS "Instructors can delete evaluations" ON evaluations;
 CREATE POLICY "Instructors can delete evaluations"
   ON evaluations FOR DELETE USING (auth.uid() = instructor_id);
 
 -- Assignments Policies
+DROP POLICY IF EXISTS "Anyone can read assignments" ON assignments;
 CREATE POLICY "Anyone can read assignments"
   ON assignments FOR SELECT USING (true);
 
+DROP POLICY IF EXISTS "Instructors can create assignments" ON assignments;
 CREATE POLICY "Instructors can create assignments"
   ON assignments FOR INSERT WITH CHECK (auth.uid() = instructor_id);
 
+DROP POLICY IF EXISTS "Instructors can update assignments" ON assignments;
 CREATE POLICY "Instructors can update assignments"
   ON assignments FOR UPDATE USING (auth.uid() = instructor_id);
 
+DROP POLICY IF EXISTS "Instructors can delete assignments" ON assignments;
 CREATE POLICY "Instructors can delete assignments"
   ON assignments FOR DELETE USING (auth.uid() = instructor_id);
 
 -- Submissions Policies
+DROP POLICY IF EXISTS "Instructors can read all submissions" ON submissions;
 CREATE POLICY "Instructors can read all submissions"
   ON submissions FOR SELECT USING (
     EXISTS (
@@ -203,28 +220,35 @@ CREATE POLICY "Instructors can read all submissions"
     )
   );
 
+DROP POLICY IF EXISTS "Students can read own submissions" ON submissions;
 CREATE POLICY "Students can read own submissions"
   ON submissions FOR SELECT USING (auth.uid() = student_id);
 
+DROP POLICY IF EXISTS "Students can create submissions" ON submissions;
 CREATE POLICY "Students can create submissions"
   ON submissions FOR INSERT WITH CHECK (auth.uid() = student_id);
 
+DROP POLICY IF EXISTS "Students can update own submissions" ON submissions;
 CREATE POLICY "Students can update own submissions"
   ON submissions FOR UPDATE USING (auth.uid() = student_id);
 
 -- Admin Comments Policies
+DROP POLICY IF EXISTS "Admins and instructors can read private comments" ON admin_comments;
 CREATE POLICY "Admins and instructors can read private comments"
   ON admin_comments FOR SELECT USING (
     is_private = false OR 
     (is_private = true AND EXISTS (SELECT 1 FROM profiles WHERE profiles.id = auth.uid() AND role IN ('admin', 'instructor')))
   );
 
+DROP POLICY IF EXISTS "Admins and instructors can create comments" ON admin_comments;
 CREATE POLICY "Admins and instructors can create comments"
   ON admin_comments FOR INSERT WITH CHECK (auth.uid() = author_id AND EXISTS (SELECT 1 FROM profiles WHERE profiles.id = auth.uid() AND role IN ('admin', 'instructor')));
 
+DROP POLICY IF EXISTS "Authors can update own comments" ON admin_comments;
 CREATE POLICY "Authors can update own comments"
   ON admin_comments FOR UPDATE USING (auth.uid() = author_id);
 
+DROP POLICY IF EXISTS "Authors can delete own comments" ON admin_comments;
 CREATE POLICY "Authors can delete own comments"
   ON admin_comments FOR DELETE USING (auth.uid() = author_id);
 
