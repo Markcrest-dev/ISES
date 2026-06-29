@@ -14,13 +14,13 @@ The foundational system and manual evaluation flow are fully operational:
 4. **Student Workflow**:
    - View detailed evaluations via the Student Dashboard.
 5. **Automatic Grade Calculation**: The system automatically calculates percentages and letter grades (A-F) based on evaluation scores.
+6. **Assignments & Submissions Workflow**: Extending the database schema and creating UI pages for instructors to manage assignments, and students to submit work.
+7. **Instructor Course Management**: A dedicated UI allowing instructors to create and manage courses seamlessly.
+8. **AI-Powered Evaluation Engine**: Integration with OpenAI for automated grading and providing personalized feedback via a secure Node.js microservice.
 
 ## 🚧 What Is Being Built Right Now
-- **Assignments & Submissions Workflow**: Extending the database schema and creating UI pages for instructors to manage assignments, and students to submit work.
-- **Instructor Course Management**: A dedicated UI allowing instructors to create and manage courses seamlessly.
+- **Admin Comment System**: Track notes and observations for individual students with specific privacy settings and priority levels. (Currently working on UI/UX).
 
 ## 🚀 Roadmap & Next Steps
-1. **AI-Powered Evaluation Engine**: Integration with OpenAI GPT-4 / Anthropic Claude for automated grading and providing personalized feedback via Edge Functions.
-2. **Admin Comment System**: Track notes and observations for individual students with specific privacy settings and priority levels.
-3. **Advanced Learning Analytics**: Predictive analytics, early warning alerts, and learning style analysis using the VARK model.
-4. **LMS Integrations**: Support for Canvas, Moodle, and Blackboard.
+1. **Advanced Learning Analytics**: Predictive analytics, early warning alerts, and learning style analysis using the VARK model.
+2. **LMS Integrations**: Support for Canvas, Moodle, and Blackboard.
